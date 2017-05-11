@@ -6,7 +6,7 @@ const createAction = ({ action, name, key, status, done = action.meta.async.done
     ...action.meta,
     async: {
       key,
-      ...action.meta.async,
+      ...typeof action.meta.async === 'object' ? action.meta.async : {},
       name,
       status,
       done,
