@@ -1,5 +1,7 @@
 # redux-saga-async-action
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/diegohaz/redux-saga-async-action.svg)](https://greenkeeper.io/)
+
 [![Generated with nod](https://img.shields.io/badge/generator-nod-2196F3.svg?style=flat-square)](https://github.com/diegohaz/nod)
 [![NPM version](https://img.shields.io/npm/v/redux-saga-async-action.svg?style=flat-square)](https://npmjs.org/package/redux-saga-async-action)
 [![Build Status](https://img.shields.io/travis/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/redux-saga-async-action) [![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/redux-saga-async-action/branch/master)
