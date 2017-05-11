@@ -1,17 +1,10 @@
 import { isAsyncAction } from './utils'
-import {
-  PENDING,
-  SUCCESS,
-  FAILURE,
-  initialState,
-  getPendingState,
-  getFailureState,
-} from './selectors'
+import { PENDING, SUCCESS, FAILURE, initialState } from './selectors'
 
 const transformState = (state, name, pending, failure) => ({
   ...state,
-  [PENDING]: { ...getPendingState(state), [name]: pending },
-  [FAILURE]: { ...getFailureState(state), [name]: failure },
+  [PENDING]: { ...state[PENDING], [name]: pending },
+  [FAILURE]: { ...state[FAILURE], [name]: failure },
 })
 
 export default (state = initialState, action) => {

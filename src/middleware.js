@@ -20,7 +20,7 @@ const middleware = () => next => (action) => {
     const name = typeof meta.async === 'string' ? meta.async : meta.async.name
 
     if (!name) {
-      throw new Error(`[redux-saga-async] ${type} was dispatched with meta.async, but no name was provided.`)
+      throw new Error(`[redux-saga-async-action] ${type} was dispatched with meta.async, but no name was provided.`)
     }
 
     if (!meta.async.key) {

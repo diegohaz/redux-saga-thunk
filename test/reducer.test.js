@@ -1,12 +1,5 @@
 import { reducer } from '../src'
-import {
-  PENDING,
-  SUCCESS,
-  FAILURE,
-  initialState,
-  getPendingState,
-  getFailureState,
-} from '../src/selectors'
+import { PENDING, SUCCESS, FAILURE, initialState } from '../src/selectors'
 
 const action = meta => ({
   type: 'FOO',
@@ -22,8 +15,8 @@ it('returns the initial state', () => {
 const expectStateToMatch = (status, pending, failure) =>
   expect(reducer(initialState, action({ async: { name: 'foo', status } })))
     .toEqual({
-      [PENDING]: { ...getPendingState(), foo: pending },
-      [FAILURE]: { ...getFailureState(), foo: failure },
+      [PENDING]: { foo: pending },
+      [FAILURE]: { foo: failure },
     })
 
 it('handles PENDING', () => {
