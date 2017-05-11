@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "redux": "*",
-    "redux-saga": "*"
+    "redux-saga": ">= 0.14.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
