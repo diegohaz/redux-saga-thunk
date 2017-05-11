@@ -1,0 +1,77 @@
+{
+  "name": "redux-saga-async-action",
+  "version": "0.0.1",
+  "description": "Dispatching an action handled by redux-saga returns promise",
+  "license": "MIT",
+  "repository": "diegohaz/redux-saga-async-action",
+  "main": "index.js",
+  "author": {
+    "name": "Diego Haz",
+    "email": "hazdiego@gmail.com",
+    "url": "github.com/diegohaz"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "files": [
+    "dist",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "jest",
+    "coverage": "npm test -- --coverage",
+    "postcoverage": "opn coverage/lcov-report/index.html",
+    "lint": "eslint src test",
+    "flow": "flow check",
+    "docs": "documentation readme src --section=API",
+    "clean": "rimraf dist",
+    "prebuild": "npm run docs && npm run clean",
+    "build": "babel src -d dist",
+    "watch": "npm-watch",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "prepublish": "npm run lint && npm test && npm run build",
+    "postpublish": "git push origin master --follow-tags"
+  },
+  "watch": {
+    "test": "{src,test}/*.js",
+    "lint": "{src,test}/*.js",
+    "build": "src"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "keywords": [
+    "redux-saga-async-action"
+  ],
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "peerDependencies": {
+    "redux": "^3.6.0",
+    "redux-saga": "^0.15.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-eslint": "^7.1.1",
+    "babel-jest": "^20.0.0",
+    "babel-plugin-transform-flow-strip-types": "^6.21.0",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-stage-2": "^6.18.0",
+    "documentation": "4.0.0-rc.1",
+    "eslint": "^3.14.0",
+    "eslint-config-airbnb-base": "^11.0.1",
+    "eslint-plugin-flowtype": "^2.29.2",
+    "eslint-plugin-flowtype-errors": "^3.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "flow-bin": "^0.46.0",
+    "jest-cli": "^20.0.0",
+    "npm-watch": "^0.1.7",
+    "opn-cli": "^3.1.0",
+    "redux": "^3.6.0",
+    "redux-mock-store": "^1.2.3",
+    "redux-saga": "^0.15.3",
+    "rimraf": "^2.6.1"
+  }
+}
