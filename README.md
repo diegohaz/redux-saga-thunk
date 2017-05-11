@@ -29,54 +29,64 @@ sagaMiddleware.run(asyncSaga)
 
 ## Usage
 
-Add `meta.async` to your actions:
-
+Add `meta.async` to your actions and receive `key` on response actions:
 ```js
 const resourceCreateRequest = data => ({
   type: 'RESOURCE_CREATE_REQUEST',
   payload: data,
   meta: {
     async: 'RESOURCE_CREATE'
+    ^
   }
 })
 
-const resourceCreateSuccess = detail => ({
+const resourceCreateSuccess = (detail, key) => ({
+                                       ^
   type: 'RESOURCE_CREATE_SUCCESS',
-  success: true,
   payload: detail,
   meta: {
-    async: 'RESOURCE_CREATE'
+    async: { name: 'RESOURCE_CREATE', key }
+                                      ^
   }
 })
 
-const resourceCreateFailure = error => ({
+const resourceCreateFailure = (error, key) => ({
+                                      ^
   type: 'RESOURCE_CREATE_FAILURE',
-  error: true,
+  error: true, // flux standard action default
   payload: error,
   meta: {
-    async: 'RESOURCE_CREATE'
+    async: { name: 'RESOURCE_CREATE', key }
+                                      ^
   }
 })
 ```
 
-Handle actions with `redux-saga` like you normally do:
+`redux-saga-async-action` will automatically transform your request action and inject `async.key` into it.
+
+Handle actions with `redux-saga` like you normally do, but you'll need to grab `key` from the request action and pass it to the response actions:
 
 ```js
 // worker saga
-function* createResource(data) {
+function* createResource(data, { async }) {
+                                 ^
   try {
     const detail = yield call(api.post, '/resources', data)
-    yield put(resourceCreateSuccess(detail))
+    yield put(resourceCreateSuccess(detail, async.key))
+                                            ^
   } catch (e) {
-    yield put(resourceCreateFailure(e))
+    yield put(resourceCreateFailure(e, async.key))
+                                       ^
   }
 }
 
 // watcher saga
 function* watchResourceCreateRequest() {
   while (true) {
-    const { payload } = yield take('RESOURCE_CREATE_REQUEST')
-    yield call(createResource, payload)
+    const { payload, meta } = yield take('RESOURCE_CREATE_REQUEST')
+                     ^
+    yield call(createResource, payload, meta)
+                                        ^
   }
 }
 ```
