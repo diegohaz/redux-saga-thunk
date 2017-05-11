@@ -42,6 +42,7 @@ const resourceCreateRequest = data => ({
 
 const resourceCreateSuccess = detail => ({
   type: 'RESOURCE_CREATE_SUCCESS',
+  success: true,
   payload: detail,
   meta: {
     async: 'RESOURCE_CREATE'
