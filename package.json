@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-async-action",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Dispatching an action handled by redux-saga returns promise",
   "license": "MIT",
   "repository": "diegohaz/redux-saga-async-action",
