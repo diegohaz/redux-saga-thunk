@@ -30,6 +30,7 @@ sagaMiddleware.run(asyncSaga)
 ## Usage
 
 Add `meta.async` to your actions and receive `key` on response actions:
+
 ```js
 const resourceCreateRequest = data => ({
   type: 'RESOURCE_CREATE_REQUEST',

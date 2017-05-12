@@ -54,7 +54,7 @@ it('dispatches action with proper status and key when it is not defined', () => 
   const expected = createAction({
     async: expect.objectContaining({
       key: expect.any(String),
-      status: 'PENDING',
+      status: 'pending',
     }),
   })
   expect(store.dispatch(action)).toBeInstanceOf(Promise)
@@ -67,7 +67,7 @@ it('dispatches action with proper status and key when it is defined', () => {
   const expected = createAction({
     async: expect.objectContaining({
       key: '123',
-      status: 'SUCCESS',
+      status: 'success',
     }),
   })
   expect(store.dispatch(action)).toEqual(expected)
@@ -103,7 +103,7 @@ it('dispathes action with proper status when it has error', () => {
     meta: expect.objectContaining({
       async: expect.objectContaining({
         key: '123',
-        status: 'FAILURE',
+        status: 'failure',
       }),
     }),
   })
