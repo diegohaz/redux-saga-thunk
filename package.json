@@ -43,14 +43,18 @@
     "testEnvironment": "node"
   },
   "keywords": [
-    "redux-saga-async-action"
+    "redux-saga-async-action",
+    "redux-saga",
+    "redux",
+    "async",
+    "redux-thunk",
+    "promise"
   ],
   "dependencies": {
     "lodash": "^4.17.4"
   },
   "peerDependencies": {
-    "redux": "*",
-    "redux-saga": ">= 0.14.0"
+    "redux": "*"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",

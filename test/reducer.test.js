@@ -1,32 +1,32 @@
 import { reducer } from '../src'
-import { PENDING, SUCCESS, FAILURE, initialState } from '../src/selectors'
+import { PENDING, FAILURE, initialState } from '../src/selectors'
 
-const action = meta => ({
+const action = (meta, error) => ({
   type: 'FOO',
+  error,
   ...meta ? { meta } : {},
 })
 
 it('returns the initial state', () => {
   expect(reducer(undefined, {})).toEqual(initialState)
   expect(reducer(undefined, action())).toEqual(initialState)
-  expect(reducer(undefined, action({ async: { name: 'foo' } }))).toEqual(initialState)
 })
 
-const expectStateToMatch = (status, pending, failure) =>
-  expect(reducer(initialState, action({ async: { name: 'foo', status } })))
+const expectStateToMatch = (async, error, pending, failure) =>
+  expect(reducer(initialState, action({ async }, error)))
     .toEqual({
-      [PENDING]: { foo: pending },
-      [FAILURE]: { foo: failure },
+      [PENDING]: { FOO: pending },
+      [FAILURE]: { FOO: failure },
     })
 
 it('handles PENDING', () => {
-  expectStateToMatch(PENDING, true, false)
+  expectStateToMatch('FOO_1234567890123456_REQUEST', false, true, false)
 })
 
 it('handles SUCCESS', () => {
-  expectStateToMatch(SUCCESS, false, false)
+  expectStateToMatch('FOO_1234567890123456_RESPONSE', false, false, false)
 })
 
 it('handles FAILURE', () => {
-  expectStateToMatch(FAILURE, false, true)
+  expectStateToMatch('FOO_1234567890123456_RESPONSE', true, false, true)
 })

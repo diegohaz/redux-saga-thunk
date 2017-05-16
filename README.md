@@ -4,7 +4,9 @@
 [![NPM version](https://img.shields.io/npm/v/redux-saga-async-action.svg?style=flat-square)](https://npmjs.org/package/redux-saga-async-action)
 [![Build Status](https://img.shields.io/travis/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/redux-saga-async-action) [![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/redux-saga-async-action/branch/master)
 
-Dispatching an action handled by redux-saga returns promise
+Dispatching an action handled by redux-saga returns promise.
+
+> `redux-saga-async-action` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `failure` etc.
 
 ## Install
 
@@ -12,19 +14,15 @@ Dispatching an action handled by redux-saga returns promise
 
 ## Basic setup
 
-Add `middleware` and `saga` to your redux configuration:
+Add `middleware` to your redux configuration (**before redux-saga middleware**):
 
 ```js
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import { middleware as asyncMiddleware, saga as asyncSaga } from 'redux-saga-async-action'
+import { middleware as asyncMiddleware } from 'redux-saga-async-action'
 
-// add middleware
 const sagaMiddleware = createSagaMiddleware()
-const store = createStore({}, applyMiddleware(sagaMiddleware, asyncMiddleware))
-
-// add saga
-sagaMiddleware.run(asyncSaga)
+const store = createStore({}, applyMiddleware(asyncMiddleware, sagaMiddleware))
 ```
 
 ## Usage
@@ -33,50 +31,52 @@ Add `meta.async` to your actions and receive `key` on response actions:
 
 ```js
 const resourceCreateRequest = data => ({
-  type: 'RESOURCE_CREATE_REQUEST',
-  payload: data,
+  type: 'RESOURCE_CREATE_REQUEST', // you can name it as you want
+  payload: data, // promise will return payload
   meta: {
-    async: 'RESOURCE_CREATE'
+    async: true
     ^
   }
 })
 
 const resourceCreateSuccess = (detail, key) => ({
                                        ^
-  type: 'RESOURCE_CREATE_SUCCESS',
+  type: 'RESOURCE_CREATE_SUCCESS', // name really doesn't matter
   payload: detail,
   meta: {
-    async: { name: 'RESOURCE_CREATE', key }
-                                      ^
+    async: key
+           ^
   }
 })
 
 const resourceCreateFailure = (error, key) => ({
                                       ^
   type: 'RESOURCE_CREATE_FAILURE',
-  error: true, // flux standard action default
+  error: true, // redux-saga-async-action will use this to determine if that's a failed action
   payload: error,
   meta: {
-    async: { name: 'RESOURCE_CREATE', key }
-                                      ^
+    async: key
+           ^
   }
 })
 ```
 
-`redux-saga-async-action` will automatically transform your request action and inject `async.key` into it.
+`redux-saga-async-action` will automatically transform your request action and inject a `key` into it.
 
 Handle actions with `redux-saga` like you normally do, but you'll need to grab `key` from the request action and pass it to the response actions:
 
 ```js
 // worker saga
+// async will be transformed in something like 'RESOURCE_CREATE_REQUEST_1234567890123456_REQUEST'
+// the 16 digits in the middle are necessary to handle multiple async actions with same type
 function* createResource(data, { async }) {
                                  ^
   try {
     const detail = yield call(api.post, '/resources', data)
-    yield put(resourceCreateSuccess(detail, async.key))
+    yield put(resourceCreateSuccess(detail, async))
                                             ^
   } catch (e) {
-    yield put(resourceCreateFailure(e, async.key))
+    yield put(resourceCreateFailure(e, async))
                                        ^
   }
 }
@@ -124,8 +124,8 @@ Now you can use selectors on your containers:
 import { isPending, hasFailed } from 'redux-saga-async-action'
 
 const mapStateToProps = state => ({
-  loading: isPending(state, 'RESOURCE_CREATE'),
-  error: hasFailed(state, 'RESOURCE_CREATE')
+  loading: isPending(state, 'RESOURCE_CREATE_REQUEST'),
+  error: hasFailed(state, 'RESOURCE_CREATE_REQUEST')
 })
 ```
 

@@ -1,46 +1,37 @@
-import { PENDING, SUCCESS, FAILURE } from './selectors'
+import {
+  isAsyncAction,
+  getAsyncMeta,
+  getAsyncName,
+  createAsyncAction,
+  generateAsyncKey,
+  hasKey,
+} from './utils'
 
-const createAction = ({ action, name, key, status, done = action.meta.async.done }) => ({
-  ...action,
-  meta: {
-    ...action.meta,
-    async: {
-      key,
-      ...typeof action.meta.async === 'object' ? action.meta.async : {},
-      name,
-      status,
-      done,
-    },
-  },
-})
+const middleware = () => {
+  const responses = {}
 
-const middleware = () => next => (action) => {
-  const { type, meta, error } = action
-  if (meta && meta.async) {
-    const name = typeof meta.async === 'string' ? meta.async : meta.async.name
-
-    if (!name) {
-      throw new Error(`[redux-saga-async-action] ${type} was dispatched with meta.async, but no name was provided.`)
-    }
-
-    if (!meta.async.key) {
-      const key = Math.random().toFixed(16).substring(2)
-      const status = PENDING
-
-      if (typeof meta.async.done !== 'function') {
+  return next => (action) => {
+    const { error, payload } = action
+    if (isAsyncAction(action)) {
+      if (!hasKey(action)) {
+        const key = generateAsyncKey(action)
+        next(createAsyncAction(action, key))
         return new Promise((resolve, reject) => {
-          // istanbul ignore next
-          const done = (err, response) => (err ? reject(err) : resolve(response))
-          next(createAction({ action, name, key, status, done }))
+          responses[key] = (err, response) => (err ? reject(err) : resolve(response))
         })
       }
-      return next(createAction({ action, name, key, status }))
-    } else if (error) {
-      return next(createAction({ action, name, status: FAILURE }))
+      const key = getAsyncMeta(action)
+
+      if (!responses[key]) {
+        throw new Error(`[redux-saga-async-action] ${getAsyncName(action)} should be dispatched before ${action.type}`)
+      }
+
+      responses[key](error, payload)
+      delete responses[key]
+      return next(createAsyncAction(action, generateAsyncKey(action)))
     }
-    return next(createAction({ action, name, status: SUCCESS }))
+    return next(action)
   }
-  return next(action)
 }
 
 export default middleware

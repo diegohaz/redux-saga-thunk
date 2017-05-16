@@ -1,5 +1,5 @@
-import { isAsyncAction } from './utils'
-import { PENDING, SUCCESS, FAILURE, initialState } from './selectors'
+import { isAsyncAction, isAsyncRequestAction, getAsyncName } from './utils'
+import { PENDING, FAILURE, initialState } from './selectors'
 
 const transformState = (state, name, pending, failure) => ({
   ...state,
@@ -9,12 +9,12 @@ const transformState = (state, name, pending, failure) => ({
 
 export default (state = initialState, action) => {
   if (!isAsyncAction(action)) return state
-  const { name, status } = action.meta.async
+  const name = getAsyncName(action)
 
-  switch (status) {
-    case PENDING: return transformState(state, name, true, false)
-    case SUCCESS: return transformState(state, name, false, false)
-    case FAILURE: return transformState(state, name, false, true)
-    default: return state
+  if (isAsyncRequestAction(action)) {
+    return transformState(state, name, true, false)
+  } else if (action.error) {
+    return transformState(state, name, false, true)
   }
+  return transformState(state, name, false, false)
 }

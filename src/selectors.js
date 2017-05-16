@@ -3,7 +3,6 @@ import find from 'lodash/find'
 import pick from 'lodash/pick'
 
 export const PENDING = 'pending'
-export const SUCCESS = 'success'
 export const FAILURE = 'failure'
 
 type AsyncState = { [string]: ?{} }

@@ -9,104 +9,46 @@ const createAction = meta => ({
 })
 
 it('dispatches the exactly same action when it has no meta', () => {
-  const store = mockStore({})
+  const { dispatch, getActions } = mockStore({})
   const action = createAction()
-  expect(store.dispatch(action)).toEqual(action)
-  expect(store.getActions()).toEqual([action])
+  expect(dispatch(action)).toEqual(action)
+  expect(getActions()).toEqual([action])
 })
 
 it('dispatches the exactly same action when it has no meta.async', () => {
-  const store = mockStore({})
+  const { dispatch, getActions } = mockStore({})
   const action = createAction({})
-  expect(store.dispatch(action)).toEqual(action)
-  expect(store.getActions()).toEqual([action])
+  expect(dispatch(action)).toEqual(action)
+  expect(getActions()).toEqual([action])
 })
 
-it('throws an error when it has no name', () => {
-  const store = mockStore({})
+it('dispatches an action with request key when it has meta.async but no key', () => {
+  const { dispatch, getActions } = mockStore({})
   const action = createAction({ async: true })
-  expect(() => store.dispatch(action)).toThrow()
-})
-
-it('dispatches action with proper name when it is defined as string', () => {
-  const store = mockStore({})
-  const action = createAction({ async: 'foo' })
   const expected = createAction({
-    async: expect.objectContaining({ name: 'foo' }),
+    async: expect.stringMatching(/^FOO_\d{16}_REQUEST$/),
   })
-  expect(store.dispatch(action)).toBeInstanceOf(Promise)
-  expect(store.getActions()).toEqual([expected])
+  expect(dispatch(action)).toBeInstanceOf(Promise)
+  expect(getActions()).toEqual([expected])
 })
 
-it('dispatches action with proper name when it is defined as property', () => {
-  const store = mockStore({})
-  const action = createAction({ async: { name: 'foo' } })
+it('throws an error when response action is dispatched before request action', () => {
+  const { dispatch } = mockStore({})
+  const action = createAction({ async: 'FOOBAR_1234567890123456_REQUEST' })
+  expect(() => dispatch(action)).toThrow('[redux-saga-async-action] FOOBAR should be dispatched before FOO')
+})
+
+it('dispatches an action with response key when it has meta.async with key', () => {
+  const { dispatch, getActions, clearActions } = mockStore({})
+  // dispatch request action
+  dispatch(createAction({ async: 'FOOBAR' }))
+  const [key] = getActions()[0].meta.async.match(/\d{16}/)
+  clearActions()
+
+  const action = createAction({ async: `FOOBAR_${key}_REQUEST` })
   const expected = createAction({
-    async: expect.objectContaining({ name: 'foo' }),
+    async: expect.stringMatching(`FOOBAR_${key}_RESPONSE`),
   })
-  expect(store.dispatch(action)).toBeInstanceOf(Promise)
-  expect(store.getActions()).toEqual([expected])
-})
-
-it('dispatches action with proper status and key when it is not defined', () => {
-  const store = mockStore({})
-  const action = createAction({ async: 'foo' })
-  const expected = createAction({
-    async: expect.objectContaining({
-      key: expect.any(String),
-      status: 'pending',
-    }),
-  })
-  expect(store.dispatch(action)).toBeInstanceOf(Promise)
-  expect(store.getActions()).toEqual([expected])
-})
-
-it('dispatches action with proper status and key when it is defined', () => {
-  const store = mockStore({})
-  const action = createAction({ async: { name: 'foo', key: '123' } })
-  const expected = createAction({
-    async: expect.objectContaining({
-      key: '123',
-      status: 'success',
-    }),
-  })
-  expect(store.dispatch(action)).toEqual(expected)
-  expect(store.getActions()).toEqual([expected])
-})
-
-it('dispatches action with done method when it is not defined', () => {
-  const store = mockStore({})
-  const action = createAction({ async: 'foo' })
-  const expected = createAction({
-    async: expect.objectContaining({ done: expect.any(Function) }),
-  })
-  expect(store.dispatch(action)).toBeInstanceOf(Promise)
-  expect(store.getActions()).toEqual([expected])
-})
-
-it('preserves done method when it is defined', () => {
-  const done = () => {}
-  const store = mockStore({})
-  const action = createAction({ async: { name: 'foo', done } })
-  const expected = createAction({
-    async: expect.objectContaining({ done }),
-  })
-  expect(store.dispatch(action)).toEqual(expected)
-  expect(store.getActions()).toEqual([expected])
-})
-
-it('dispathes action with proper status when it has error', () => {
-  const store = mockStore({})
-  const action = { type: 'FOO', error: true, meta: { async: { name: 'foo', key: '123' } } }
-  const expected = expect.objectContaining({
-    error: true,
-    meta: expect.objectContaining({
-      async: expect.objectContaining({
-        key: '123',
-        status: 'failure',
-      }),
-    }),
-  })
-  expect(store.dispatch(action)).toEqual(expected)
-  expect(store.getActions()).toEqual([expected])
+  expect(dispatch(action)).toEqual(expected)
+  expect(getActions()).toEqual([expected])
 })
