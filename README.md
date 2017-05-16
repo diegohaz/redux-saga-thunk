@@ -4,7 +4,21 @@
 [![NPM version](https://img.shields.io/npm/v/redux-saga-async-action.svg?style=flat-square)](https://npmjs.org/package/redux-saga-async-action)
 [![Build Status](https://img.shields.io/travis/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/redux-saga-async-action) [![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/redux-saga-async-action/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/redux-saga-async-action/branch/master)
 
-Dispatching an action handled by redux-saga returns promise.
+Dispatching an action handled by [redux-saga](https://github.com/redux-saga/redux-saga) returns promise. It looks like [redux-thunk](https://github.com/gaearon/redux-thunk), but with pure action creators.
+
+```js
+store.dispatch({ 
+  type: 'FOO',
+  payload: { title: 'bar' },
+  meta: {
+    async: true
+  }
+}).then((detail) => {
+  console.log('Yaay!', detail)
+}).catch((error) => {
+  console.log('Oops!', error)
+})
+```
 
 > `redux-saga-async-action` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `failure` etc.
 
@@ -97,7 +111,7 @@ Dispatch the action from somewhere. Since that's being intercepted by `asyncMidd
 ```js
 store.dispatch(resourceCreateRequest({ title: 'foo' })).then((detail) => {
   // detail is the action payload property
-  console.log('Yay!', detail)
+  console.log('Yaay!', detail)
 }).catch((error) => {
   // error is the action payload property
   console.log('Oops!', error)
