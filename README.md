@@ -80,28 +80,20 @@ const resourceCreateFailure = (error, key) => ({
 Handle actions with `redux-saga` like you normally do, but you'll need to grab `key` from the request action and pass it to the response actions:
 
 ```js
-// worker saga
 // async will be transformed in something like 'RESOURCE_CREATE_REQUEST_1234567890123456_REQUEST'
 // the 16 digits in the middle are necessary to handle multiple async actions with same type
-function* createResource(data, { async }) {
-                                 ^
-  try {
-    const detail = yield call(api.post, '/resources', data)
-    yield put(resourceCreateSuccess(detail, async))
-                                            ^
-  } catch (e) {
-    yield put(resourceCreateFailure(e, async))
-                                       ^
-  }
-}
-
-// watcher saga
-function* watchResourceCreateRequest() {
-  while (true) {
-    const { payload, meta } = yield take('RESOURCE_CREATE_REQUEST')
-                     ^
-    yield call(createResource, payload, meta)
-                                        ^
+function* createResource() {
+  while(true) {
+    const { payload, meta } = yield take('RESOURCE_CREATE_REQUEST')
+                     ^
+    try {
+      const detail = yield call(callApi, payload)
+      yield put(resourceCreateSuccess(detail, meta.async))
+                                              ^
+    } catch (e) {
+      yield put(resourceCreateFailure(e, meta.async))
+                                         ^
+    }
   }
 }
 ```
