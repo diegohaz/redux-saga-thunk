@@ -20,7 +20,7 @@ store.dispatch({
 })
 ```
 
-> `redux-saga-async-action` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `failure` etc.
+> `redux-saga-async-action` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `error` etc.
 
 ## Install
 
