@@ -60,9 +60,9 @@ describe('Integration test', () => {
     const payload = 'success'
     const { dispatch, getState } = configureStore()
     expect(dispatch(fooRequest(payload))).toBeInstanceOf(Promise)
-    await delay(490)
+    await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    await delay(10)
+    await delay(200)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
   })
 
@@ -70,9 +70,9 @@ describe('Integration test', () => {
     const payload = 'failure'
     const { dispatch, getState } = configureStore()
     expect(dispatch(fooRequest(payload))).toBeInstanceOf(Promise)
-    await delay(490)
+    await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    await delay(10)
+    await delay(200)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
   })
