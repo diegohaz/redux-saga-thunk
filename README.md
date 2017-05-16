@@ -46,7 +46,7 @@ Add `meta.async` to your actions and receive `key` on response actions:
 ```js
 const resourceCreateRequest = data => ({
   type: 'RESOURCE_CREATE_REQUEST', // you can name it as you want
-  payload: data, // promise will return payload
+  payload: data,
   meta: {
     async: true
     ^
@@ -56,7 +56,7 @@ const resourceCreateRequest = data => ({
 const resourceCreateSuccess = (detail, key) => ({
                                        ^
   type: 'RESOURCE_CREATE_SUCCESS', // name really doesn't matter
-  payload: detail,
+  payload: detail, // promise will return payload
   meta: {
     async: key
            ^
