@@ -7,17 +7,16 @@
 Dispatching an action handled by [redux-saga](https://github.com/redux-saga/redux-saga) returns promise. It looks like [redux-thunk](https://github.com/gaearon/redux-thunk), but with pure action creators.
 
 ```js
-store.dispatch({ 
-  type: 'FOO',
-  payload: { title: 'bar' },
-  meta: {
-    thunk: true
+class MyComponent extends React.Component {
+  componentWillMount() {
+    // `doSomething` dispatches an action which is handled by some saga
+    this.props.doSomething().then((detail) => {
+      console.log('Yaay!', detail)
+    }).catch((error) => {
+      console.log('Oops!', error)
+    })
   }
-}).then((detail) => {
-  console.log('Yaay!', detail)
-}).catch((error) => {
-  console.log('Oops!', error)
-})
+}
 ```
 
 > `redux-saga-thunk` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `error` etc.
