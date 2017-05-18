@@ -40,7 +40,7 @@ const store = createStore({}, applyMiddleware(thunkMiddleware, sagaMiddleware))
 
 ## Usage
 
-Add `meta.thunk` to your actions and receive `key` on response actions:
+Add `meta.thunk` to your actions and receive `thunk` on response actions:
 
 ```js
 const resourceCreateRequest = data => ({
@@ -76,7 +76,7 @@ const resourceCreateFailure = (error, thunk) => ({
 
 `redux-saga-thunk` will automatically transform your request action and inject a `key` into it.
 
-Handle actions with `redux-saga` like you normally do, but you'll need to grab `key` from the request action and pass it to the response actions:
+Handle actions with `redux-saga` like you normally do, but you'll need to grab `meta.thunk` from the request action and pass it to the response actions:
 
 ```js
 // thunk will be transformed in something like 'RESOURCE_CREATE_REQUEST_1234567890123456_REQUEST'
