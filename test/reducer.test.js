@@ -12,8 +12,8 @@ it('returns the initial state', () => {
   expect(reducer(undefined, action())).toEqual(initialState)
 })
 
-const expectStateToMatch = (async, error, pending, failure) =>
-  expect(reducer(initialState, action({ async }, error)))
+const expectStateToMatch = (thunk, error, pending, failure) =>
+  expect(reducer(initialState, action({ thunk }, error)))
     .toEqual({
       [PENDING]: { FOO: pending },
       [FAILURE]: { FOO: failure },

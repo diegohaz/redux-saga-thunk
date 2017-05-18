@@ -1,11 +1,11 @@
 import {
-  isAsyncAction,
-  isAsyncRequestAction,
-  getAsyncMeta,
-  createAsyncAction,
-  getAsyncName,
+  isThunkAction,
+  isThunkRequestAction,
+  getThunkMeta,
+  createThunkAction,
+  getThunkName,
   hasKey,
-  generateAsyncKey,
+  generateThunkKey,
 } from '../src/utils'
 
 const action = meta => ({
@@ -13,64 +13,64 @@ const action = meta => ({
   ...meta ? { meta } : {},
 })
 
-test('isAsyncAction', () => {
-  expect(isAsyncAction(action())).toBe(false)
-  expect(isAsyncAction(action({}))).toBe(false)
-  expect(isAsyncAction(action({ async: {} }))).toBe(true)
-  expect(isAsyncAction(action({ async: true }))).toBe(true)
+test('isThunkAction', () => {
+  expect(isThunkAction(action())).toBe(false)
+  expect(isThunkAction(action({}))).toBe(false)
+  expect(isThunkAction(action({ thunk: {} }))).toBe(true)
+  expect(isThunkAction(action({ thunk: true }))).toBe(true)
 })
 
-test('isAsyncRequestAction', () => {
-  expect(isAsyncRequestAction(action())).toBe(false)
-  expect(isAsyncRequestAction(action({}))).toBe(false)
-  expect(isAsyncRequestAction(action({ async: true }))).toBe(false)
-  expect(isAsyncRequestAction(action({ async: 'FOO' }))).toBe(false)
-  expect(isAsyncRequestAction(action({ async: 'FOO_1234567890123456' }))).toBe(false)
-  expect(isAsyncRequestAction(action({ async: 'FOO_1234567890123456_REQUEST' }))).toBe(true)
+test('isThunkRequestAction', () => {
+  expect(isThunkRequestAction(action())).toBe(false)
+  expect(isThunkRequestAction(action({}))).toBe(false)
+  expect(isThunkRequestAction(action({ thunk: true }))).toBe(false)
+  expect(isThunkRequestAction(action({ thunk: 'FOO' }))).toBe(false)
+  expect(isThunkRequestAction(action({ thunk: 'FOO_1234567890123456' }))).toBe(false)
+  expect(isThunkRequestAction(action({ thunk: 'FOO_1234567890123456_REQUEST' }))).toBe(true)
 })
 
-test('getAsyncMeta', () => {
-  expect(getAsyncMeta(action({}))).toBeNull()
-  expect(getAsyncMeta(action({ async: true }))).toBe(true)
+test('getThunkMeta', () => {
+  expect(getThunkMeta(action({}))).toBeNull()
+  expect(getThunkMeta(action({ thunk: true }))).toBe(true)
 })
 
-test('createAsyncAction', () => {
-  expect(createAsyncAction({ type: 'FOO' }, 'foo')).toEqual({
+test('createThunkAction', () => {
+  expect(createThunkAction({ type: 'FOO' }, 'foo')).toEqual({
     type: 'FOO',
     meta: {
-      async: 'foo',
+      thunk: 'foo',
     },
   })
 })
 
-test('getAsyncName', () => {
-  expect(getAsyncName({ type: 'FOO' })).toBe('FOO')
-  expect(getAsyncName({
+test('getThunkName', () => {
+  expect(getThunkName({ type: 'FOO' })).toBe('FOO')
+  expect(getThunkName({
     type: 'FOO',
     meta: {},
   })).toBe('FOO')
-  expect(getAsyncName({
+  expect(getThunkName({
     type: 'FOO',
     meta: {
-      async: true,
+      thunk: true,
     },
   })).toBe('FOO')
-  expect(getAsyncName({
+  expect(getThunkName({
     type: 'FOO',
     meta: {
-      async: 'BAR',
+      thunk: 'BAR',
     },
   })).toBe('BAR')
-  expect(getAsyncName({
+  expect(getThunkName({
     type: 'FOO',
     meta: {
-      async: 'BAR_1234567890123456_REQUEST',
+      thunk: 'BAR_1234567890123456_REQUEST',
     },
   })).toBe('BAR')
-  expect(getAsyncName({
+  expect(getThunkName({
     type: 'FOO',
     meta: {
-      async: 'BAR_1234567890123456_RESPONSE',
+      thunk: 'BAR_1234567890123456_RESPONSE',
     },
   })).toBe('BAR')
 })
@@ -84,19 +84,19 @@ test('hasKey', () => {
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: true,
+      thunk: true,
     },
   })).toBe(false)
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: 'FOO',
+      thunk: 'FOO',
     },
   })).toBe(false)
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: 'FOO_1234567890123456_REQUEST',
+      thunk: 'FOO_1234567890123456_REQUEST',
     },
   })).toBe(true)
 })
@@ -110,37 +110,37 @@ test('hasKey', () => {
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: true,
+      thunk: true,
     },
   })).toBe(false)
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: 'FOO',
+      thunk: 'FOO',
     },
   })).toBe(false)
   expect(hasKey({
     type: 'FOO',
     meta: {
-      async: 'FOO_1234567890123456_REQUEST',
+      thunk: 'FOO_1234567890123456_REQUEST',
     },
   })).toBe(true)
 })
 
-test('generateAsyncKey', () => {
-  expect(generateAsyncKey({
+test('generateThunkKey', () => {
+  expect(generateThunkKey({
     type: 'FOO',
     meta: {
-      async: 'FOO',
+      thunk: 'FOO',
     },
   })).toEqual(expect.stringMatching(/^FOO_\d{16}_REQUEST/))
-  expect(generateAsyncKey({
+  expect(generateThunkKey({
     type: 'FOO',
   })).toEqual(expect.stringMatching(/^FOO_\d{16}_REQUEST/))
-  expect(generateAsyncKey({
+  expect(generateThunkKey({
     type: 'FOO',
     meta: {
-      async: 'FOO_1234567890123456_REQUEST',
+      thunk: 'FOO_1234567890123456_REQUEST',
     },
   })).toEqual(expect.stringMatching(/^FOO_1234567890123456_RESPONSE/))
 })

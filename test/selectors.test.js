@@ -1,7 +1,7 @@
 import * as selectors from '../src/selectors'
 
 const altState = {
-  async: {
+  thunk: {
     [selectors.PENDING]: {
       FETCH_USER: false,
       FETCH_USERS: true,
@@ -24,44 +24,44 @@ test('initialState', () => {
   })
 })
 
-test('getAsyncState', () => {
-  expect(() => selectors.getAsyncState()).toThrow()
-  expect(() => selectors.getAsyncState({})).toThrow()
-  expect(selectors.getAsyncState({ async: {} })).toEqual({})
+test('getThunkState', () => {
+  expect(() => selectors.getThunkState()).toThrow()
+  expect(() => selectors.getThunkState({})).toThrow()
+  expect(selectors.getThunkState({ thunk: {} })).toEqual({})
 })
 
 test('getPendingState', () => {
-  expect(selectors.getPendingState({ async: undefined }))
+  expect(selectors.getPendingState({ thunk: undefined }))
     .toEqual(selectors.initialState[selectors.PENDING])
-  expect(selectors.getPendingState({ async: selectors.initialState }))
+  expect(selectors.getPendingState({ thunk: selectors.initialState }))
     .toEqual(selectors.initialState[selectors.PENDING])
   expect(selectors.getPendingState(altState))
-    .toEqual(altState.async[selectors.PENDING])
+    .toEqual(altState.thunk[selectors.PENDING])
 })
 
 test('getFailureState', () => {
-  expect(selectors.getFailureState({ async: undefined }))
+  expect(selectors.getFailureState({ thunk: undefined }))
     .toEqual(selectors.initialState[selectors.FAILURE])
-  expect(selectors.getFailureState({ async: selectors.initialState }))
+  expect(selectors.getFailureState({ thunk: selectors.initialState }))
     .toEqual(selectors.initialState[selectors.FAILURE])
   expect(selectors.getFailureState(altState))
-    .toEqual(altState.async[selectors.FAILURE])
+    .toEqual(altState.thunk[selectors.FAILURE])
 })
 
 describe('isPending', () => {
   test('all', () => {
-    expect(selectors.isPending({ async: selectors.initialState })).toBe(false)
+    expect(selectors.isPending({ thunk: selectors.initialState })).toBe(false)
     expect(selectors.isPending(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.isPending({ async: selectors.initialState }, 'FETCH_USER')).toBe(false)
+    expect(selectors.isPending({ thunk: selectors.initialState }, 'FETCH_USER')).toBe(false)
     expect(selectors.isPending(altState, 'FETCH_USER')).toBe(false)
     expect(selectors.isPending(altState, 'FETCH_USERS')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.isPending({ async: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.isPending({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.isPending(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(false)
     expect(selectors.isPending(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(true)
     expect(selectors.isPending(altState, ['FETCH_USERS', 'FETCH_USER'])).toBe(true)
@@ -70,18 +70,18 @@ describe('isPending', () => {
 
 describe('hasFailed', () => {
   test('all', () => {
-    expect(selectors.hasFailed({ async: selectors.initialState })).toBe(false)
+    expect(selectors.hasFailed({ thunk: selectors.initialState })).toBe(false)
     expect(selectors.hasFailed(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.hasFailed({ async: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.hasFailed({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
     expect(selectors.hasFailed(altState, 'FETCH_USERS')).toBe(false)
     expect(selectors.hasFailed(altState, 'CREATE_USER')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.hasFailed({ async: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.hasFailed({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.hasFailed(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)

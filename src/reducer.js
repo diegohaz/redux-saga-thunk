@@ -1,4 +1,4 @@
-import { isAsyncAction, isAsyncRequestAction, getAsyncName } from './utils'
+import { isThunkAction, isThunkRequestAction, getThunkName } from './utils'
 import { PENDING, FAILURE, initialState } from './selectors'
 
 const transformState = (state, name, pending, failure) => ({
@@ -8,10 +8,10 @@ const transformState = (state, name, pending, failure) => ({
 })
 
 export default (state = initialState, action) => {
-  if (!isAsyncAction(action)) return state
-  const name = getAsyncName(action)
+  if (!isThunkAction(action)) return state
+  const name = getThunkName(action)
 
-  if (isAsyncRequestAction(action)) {
+  if (isThunkRequestAction(action)) {
     return transformState(state, name, true, false)
   } else if (action.error) {
     return transformState(state, name, false, true)

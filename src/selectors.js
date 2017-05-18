@@ -5,10 +5,10 @@ import pick from 'lodash/pick'
 export const PENDING = 'pending'
 export const FAILURE = 'failure'
 
-type AsyncState = { [string]: ?{} }
+type ThunkState = { [string]: ?{} }
 
 type State = {
-  async?: AsyncState
+  thunk?: ThunkState
 }
 
 export const initialState = {
@@ -27,18 +27,18 @@ const getIn = (state: {}, name?: string | string[]): boolean => {
   return false
 }
 
-export const getAsyncState = (state: State = {}): AsyncState => {
-  if (!Object.prototype.hasOwnProperty.call(state, 'async')) {
-    throw new Error('[redux-saga-async-action] There is no async state on reducer')
+export const getThunkState = (state: State = {}): ThunkState => {
+  if (!Object.prototype.hasOwnProperty.call(state, 'thunk')) {
+    throw new Error('[redux-saga-thunk] There is no thunk state on reducer')
   }
-  return state.async || {}
+  return state.thunk || {}
 }
 
 export const getPendingState = (state: State) =>
-  getAsyncState(state)[PENDING] || initialState[PENDING]
+  getThunkState(state)[PENDING] || initialState[PENDING]
 
 export const getFailureState = (state: State) =>
-  getAsyncState(state)[FAILURE] || initialState[FAILURE]
+  getThunkState(state)[FAILURE] || initialState[FAILURE]
 
 /**
  * Tells if an action is pending

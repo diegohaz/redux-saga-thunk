@@ -1,39 +1,39 @@
-export const isAsyncAction = action => !!(
-  action && action.meta && action.meta.async
+export const isThunkAction = action => !!(
+  action && action.meta && action.meta.thunk
 )
 
-export const isAsyncRequestAction = action => !!(
-  isAsyncAction(action) && /\d{16}_REQUEST$/.test(action.meta.async)
+export const isThunkRequestAction = action => !!(
+  isThunkAction(action) && /\d{16}_REQUEST$/.test(action.meta.thunk)
 )
 
-export const getAsyncMeta = (action) => {
-  if (isAsyncAction(action)) {
-    return action.meta.async
+export const getThunkMeta = (action) => {
+  if (isThunkAction(action)) {
+    return action.meta.thunk
   }
   return null
 }
 
-export const createAsyncAction = (action, async) => ({
+export const createThunkAction = (action, thunk) => ({
   ...action,
   meta: {
     ...action.meta,
-    async,
+    thunk,
   },
 })
 
-export const getAsyncName = (action) => {
-  const meta = getAsyncMeta(action)
+export const getThunkName = (action) => {
+  const meta = getThunkMeta(action)
   if (meta && meta.replace) {
     return meta.replace(/_\d{16}_\w+$/, '')
   }
   return action.type
 }
 
-export const hasKey = action => /_\d{16}_\w+$/.test(getAsyncMeta(action))
+export const hasKey = action => /_\d{16}_\w+$/.test(getThunkMeta(action))
 
-export const generateAsyncKey = (action) => {
-  const meta = getAsyncMeta(action)
-  const name = getAsyncName(action)
+export const generateThunkKey = (action) => {
+  const meta = getThunkMeta(action)
+  const name = getThunkName(action)
   return hasKey(action)
     ? meta.replace(/_REQUEST$/, '_RESPONSE')
     : `${name}_${Math.random().toFixed(16).substring(2)}_REQUEST`

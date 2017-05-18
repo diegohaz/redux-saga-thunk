@@ -2,8 +2,8 @@ import { createStore, applyMiddleware, combineReducers } from 'redux'
 import createSagaMiddleware, { delay } from 'redux-saga'
 import { put, take, call } from 'redux-saga/effects'
 import {
-  middleware as asyncMiddleware,
-  reducer as asyncReducer,
+  middleware as thunkMiddleware,
+  reducer as thunkReducer,
   isPending,
   hasFailed,
 } from '../src'
@@ -15,7 +15,7 @@ function* workerSaga(payload, meta) {
       type: 'FOO_SUCCESS',
       payload,
       meta: {
-        async: meta.async,
+        thunk: meta.thunk,
       },
     })
   } else {
@@ -24,7 +24,7 @@ function* workerSaga(payload, meta) {
       error: true,
       payload,
       meta: {
-        async: meta.async,
+        thunk: meta.thunk,
       },
     })
   }
@@ -40,8 +40,8 @@ function* watcherSaga() {
 
 const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware()
-  const middlewares = [asyncMiddleware, sagaMiddleware]
-  const reducer = combineReducers({ async: asyncReducer })
+  const middlewares = [thunkMiddleware, sagaMiddleware]
+  const reducer = combineReducers({ thunk: thunkReducer })
   const store = createStore(reducer, {}, applyMiddleware(...middlewares))
   sagaMiddleware.run(watcherSaga)
   return store
@@ -52,7 +52,7 @@ describe('Integration test', () => {
     type: 'FOO_REQUEST',
     payload,
     meta: {
-      async: true,
+      thunk: true,
     },
   })
 

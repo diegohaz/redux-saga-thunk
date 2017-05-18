@@ -1,9 +1,9 @@
 {
-  "name": "redux-saga-async-action",
+  "name": "redux-saga-thunk",
   "version": "0.3.1",
   "description": "Dispatching an action handled by redux-saga returns promise",
   "license": "MIT",
-  "repository": "diegohaz/redux-saga-async-action",
+  "repository": "diegohaz/redux-saga-thunk",
   "main": "index.js",
   "author": {
     "name": "Diego Haz",
@@ -43,7 +43,7 @@
     "testEnvironment": "node"
   },
   "keywords": [
-    "redux-saga-async-action",
+    "redux-saga-thunk",
     "redux-saga",
     "redux",
     "async",
