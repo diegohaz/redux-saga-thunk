@@ -33,9 +33,11 @@ Add `middleware` to your redux configuration (**before redux-saga middleware**):
 import { createStore, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { middleware as thunkMiddleware } from 'redux-saga-thunk'
+^
 
 const sagaMiddleware = createSagaMiddleware()
 const store = createStore({}, applyMiddleware(thunkMiddleware, sagaMiddleware))
+                                              ^
 ```
 
 ## Usage
