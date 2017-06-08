@@ -111,6 +111,19 @@ store.dispatch(resourceCreateRequest({ title: 'foo' })).then((detail) => {
 })
 ```
 
+Or use it inside sagas with [`put.resolve`](https://redux-saga.js.org/docs/api/#putresolveaction):
+
+```js
+function *someSaga() {
+  try {
+    const detail = yield put.resolve(resourceCreateRequest({ title: 'foo' }))
+    console.log('Yaay!', detail)
+  } catch (error) {
+    console.log('Oops!', error)
+  }
+}
+```
+
 ## Usage with selectors
 
 To use `isPending` and `hasFailed` selectors, you'll need to add the `thunkReducer` to your store:
