@@ -15,9 +15,9 @@ const middleware = () => {
     if (isThunkAction(action)) {
       if (!hasKey(action)) {
         const key = generateThunkKey(action)
-        next(createThunkAction(action, key))
         return new Promise((resolve, reject) => {
           responses[key] = (err, response) => (err ? reject(response) : resolve(response))
+          next(createThunkAction(action, key))
         })
       }
       const key = getThunkMeta(action)
