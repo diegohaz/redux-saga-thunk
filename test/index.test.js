@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import createSagaMiddleware, { delay } from 'redux-saga'
-import { put, take, call } from 'redux-saga/effects'
+import { put, take, call, fork, takeEvery } from 'redux-saga/effects'
 import {
   middleware as thunkMiddleware,
   reducer as thunkReducer,
@@ -8,7 +8,7 @@ import {
   hasFailed,
 } from '../src'
 
-function* workerSaga(payload, meta) {
+function* foo(payload, meta) {
   yield call(delay, 500)
   if (payload === 'success') {
     yield put({
@@ -30,12 +30,26 @@ function* workerSaga(payload, meta) {
   }
 }
 
-function* watcherSaga() {
+function* watchFoo() {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const { payload, meta } = yield take('FOO_REQUEST')
-    yield call(workerSaga, payload, meta)
+    yield call(foo, payload, meta)
   }
+}
+
+
+function* bar({ payload, meta }) {
+  yield put({ type: 'BAR_SUCCESS', payload, meta })
+}
+
+function* watchBar() {
+  yield takeEvery('BAR_REQUEST', bar)
+}
+
+function* sagas() {
+  yield fork(watchFoo)
+  yield fork(watchBar)
 }
 
 const configureStore = () => {
@@ -43,7 +57,7 @@ const configureStore = () => {
   const middlewares = [thunkMiddleware, sagaMiddleware]
   const reducer = combineReducers({ thunk: thunkReducer })
   const store = createStore(reducer, {}, applyMiddleware(...middlewares))
-  sagaMiddleware.run(watcherSaga)
+  sagaMiddleware.run(sagas)
   return store
 }
 
@@ -56,24 +70,40 @@ describe('Integration test', () => {
     },
   })
 
+  const barRequest = payload => ({
+    type: 'BAR_REQUEST',
+    payload,
+    meta: {
+      thunk: true,
+    },
+  })
+
   it('calls success', async () => {
-    const payload = 'success'
     const { dispatch, getState } = configureStore()
-    expect(dispatch(fooRequest(payload))).toBeInstanceOf(Promise)
+    const promise = dispatch(fooRequest('success'))
+    expect(promise).toBeInstanceOf(Promise)
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    await delay(200)
+    await expect(promise).resolves.toBe('success')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
   })
 
   it('calls failure', async () => {
-    const payload = 'failure'
     const { dispatch, getState } = configureStore()
-    expect(dispatch(fooRequest(payload))).toBeInstanceOf(Promise)
+    const promise = dispatch(fooRequest('failure'))
+    expect(promise).toBeInstanceOf(Promise)
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    await delay(200)
+    await expect(promise).rejects.toBe('failure')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
+  })
+
+  it('calls success immediatly', async () => {
+    const { dispatch, getState } = configureStore()
+    const promise = dispatch(barRequest('success'))
+    expect(promise).toBeInstanceOf(Promise)
+    await expect(promise).resolves.toBe('success')
+    expect(isPending(getState(), 'BAR_REQUEST')).toBe(false)
   })
 })
