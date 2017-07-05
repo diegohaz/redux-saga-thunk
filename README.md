@@ -29,6 +29,8 @@ When using [redux-saga](https://github.com/redux-saga/redux-saga) on server, you
 
 With [redux-form](https://github.com/erikras/redux-form), you need to return a promise from `dispatch` inside your submit handler so it will know when the submission is complete. See [an example](https://github.com/diegohaz/arc/blob/8d46b9e52db3f1066b124b93cf8b92d05094fe1c/src-example/containers/PostForm.js#L10)
 
+Finally, that's a nice way to migrate your codebase from `redux-thunk` to `redux-saga`, since you will not need to change how you dispatch your actions, they will still return promises.
+
 ## Install
 
     $ npm install --save redux-saga-thunk
