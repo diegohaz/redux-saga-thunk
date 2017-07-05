@@ -21,6 +21,14 @@ class MyComponent extends React.Component {
 
 > `redux-saga-thunk` uses [Flux Standard Action](https://github.com/acdlite/flux-standard-action) to determine action's `payload`, `error` etc.
 
+## Motivation
+
+There are two reasons I created this library: Server Side Rendering and [redux-form](https://github.com/erikras/redux-form).
+
+When using [redux-saga](https://github.com/redux-saga/redux-saga) on server, you will need to know when your actions have been finished so you can send the response to the client. There are several ways to handle that case, and `redux-saga-thunk` approach is the one I like most. See [an example](https://github.com/diegohaz/arc/blob/d194b7e9578bdf3ad70a1e0d4c09ceca849f164e/src-example/containers/PostList.js#L33).
+
+With [redux-form](https://github.com/erikras/redux-form), you need to return a promise from `dispatch` inside your submit handler so it will know when the submission is complete. See [an example](https://github.com/diegohaz/arc/blob/8d46b9e52db3f1066b124b93cf8b92d05094fe1c/src-example/containers/PostForm.js#L10)
+
 ## Install
 
     $ npm install --save redux-saga-thunk
