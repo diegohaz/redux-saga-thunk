@@ -6,6 +6,7 @@ import {
   reducer as thunkReducer,
   isPending,
   hasFailed,
+  hasSuccess,
 } from '../src'
 
 function* foo(payload, meta) {
@@ -84,8 +85,12 @@ describe('Integration test', () => {
     expect(promise).toBeInstanceOf(Promise)
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).resolves.toBe('success')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls failure', async () => {
@@ -94,9 +99,12 @@ describe('Integration test', () => {
     expect(promise).toBeInstanceOf(Promise)
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).rejects.toBe('failure')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
   })
 
   it('calls success immediatly', async () => {
@@ -105,5 +113,7 @@ describe('Integration test', () => {
     expect(promise).toBeInstanceOf(Promise)
     await expect(promise).resolves.toBe('success')
     expect(isPending(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(hasFailed(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(hasSuccess(getState(), 'BAR_REQUEST')).toBe(true)
   })
 })

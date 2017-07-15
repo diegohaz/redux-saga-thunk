@@ -205,6 +205,27 @@ const mapStateToProps = state => ({
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
+### hasSuccess
+
+Tells if an action has success
+
+**Parameters**
+
+-   `state` **State** 
+-   `name` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>)** 
+
+**Examples**
+
+```javascript
+const mapStateToProps = state => ({
+  fooHasSuccess: hasSuccess(state, 'FOO'),
+  fooOrBarHasSuccess: hasSuccess(state, ['FOO', 'BAR']),
+  anythingHasSuccess: hasSuccess(state)
+})
+```
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
 ## License
 
 MIT © [Diego Haz](https://github.com/diegohaz)

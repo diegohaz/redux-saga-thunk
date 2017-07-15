@@ -14,6 +14,12 @@ const altState = {
       CREATE_USER: true,
       UPDATE_USER: true,
     },
+    [selectors.SUCCESS]: {
+      FETCH_USER: false,
+      FETCH_USERS: false,
+      CREATE_USER: true,
+      UPDATE_USER: true,
+    },
   },
 }
 
@@ -21,6 +27,7 @@ test('initialState', () => {
   expect(selectors.initialState).toEqual({
     [selectors.PENDING]: {},
     [selectors.FAILURE]: {},
+    [selectors.SUCCESS]: {},
   })
 })
 
@@ -46,6 +53,14 @@ test('getFailureState', () => {
     .toEqual(selectors.initialState[selectors.FAILURE])
   expect(selectors.getFailureState(altState))
     .toEqual(altState.thunk[selectors.FAILURE])
+})
+test('getSuceessState', () => {
+  expect(selectors.getSuccessState({ thunk: undefined }))
+    .toEqual(selectors.initialState[selectors.SUCCESS])
+  expect(selectors.getSuccessState({ thunk: selectors.initialState }))
+    .toEqual(selectors.initialState[selectors.SUCCESS])
+  expect(selectors.getSuccessState(altState))
+    .toEqual(altState.thunk[selectors.SUCCESS])
 })
 
 describe('isPending', () => {
@@ -85,5 +100,25 @@ describe('hasFailed', () => {
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.hasFailed(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+})
+
+describe('hasSuccess', () => {
+  test('all', () => {
+    expect(selectors.hasSuccess({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.hasSuccess(altState)).toBe(true)
+  })
+
+  test('with prefix', () => {
+    expect(selectors.hasSuccess({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.hasSuccess(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.hasSuccess(altState, 'CREATE_USER')).toBe(true)
+  })
+
+  test('with array prefix', () => {
+    expect(selectors.hasSuccess({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.hasSuccess(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.hasSuccess(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.hasSuccess(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
   })
 })
