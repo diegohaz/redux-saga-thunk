@@ -6,12 +6,12 @@ import {
   reducer as thunkReducer,
   isPending,
   hasFailed,
-  hasSuccess,
+  isDone,
 } from '../src'
 
 function* foo(payload, meta) {
   yield call(delay, 500)
-  if (payload === 'success') {
+  if (payload === 'done') {
     yield put({
       type: 'FOO_SUCCESS',
       payload,
@@ -79,18 +79,18 @@ describe('Integration test', () => {
     },
   })
 
-  it('calls success', async () => {
+  it('calls done', async () => {
     const { dispatch, getState } = configureStore()
-    const promise = dispatch(fooRequest('success'))
+    const promise = dispatch(fooRequest('done'))
     expect(promise).toBeInstanceOf(Promise)
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
-    await expect(promise).resolves.toBe('success')
+    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
+    await expect(promise).resolves.toBe('done')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(isDone(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls failure', async () => {
@@ -100,20 +100,20 @@ describe('Integration test', () => {
     await delay(400)
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).rejects.toBe('failure')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
-    expect(hasSuccess(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
   })
 
-  it('calls success immediatly', async () => {
+  it('calls done immediatly', async () => {
     const { dispatch, getState } = configureStore()
-    const promise = dispatch(barRequest('success'))
+    const promise = dispatch(barRequest('done'))
     expect(promise).toBeInstanceOf(Promise)
-    await expect(promise).resolves.toBe('success')
+    await expect(promise).resolves.toBe('done')
     expect(isPending(getState(), 'BAR_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'BAR_REQUEST')).toBe(false)
-    expect(hasSuccess(getState(), 'BAR_REQUEST')).toBe(true)
+    expect(isDone(getState(), 'BAR_REQUEST')).toBe(true)
   })
 })

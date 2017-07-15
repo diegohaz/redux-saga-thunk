@@ -205,9 +205,9 @@ const mapStateToProps = state => ({
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
-### hasSuccess
+### isDone
 
-Tells if an action has success
+Tells if an action is done
 
 **Parameters**
 
@@ -218,9 +218,9 @@ Tells if an action has success
 
 ```javascript
 const mapStateToProps = state => ({
-  fooHasSuccess: hasSuccess(state, 'FOO'),
-  fooOrBarHasSuccess: hasSuccess(state, ['FOO', 'BAR']),
-  anythingHasSuccess: hasSuccess(state)
+  fooIsDone: isDone(state, 'FOO'),
+  fooOrBarIsDone: isDone(state, ['FOO', 'BAR']),
+  anythingIsDone: isDone(state)
 })
 ```
 
