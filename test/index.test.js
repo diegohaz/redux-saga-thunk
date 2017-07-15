@@ -7,6 +7,7 @@ import {
   isPending,
   hasFailed,
   isDone,
+  isComplete,
 } from '../src'
 
 function* foo(payload, meta) {
@@ -87,10 +88,12 @@ describe('Integration test', () => {
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
     expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).resolves.toBe('done')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
     expect(isDone(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls failure', async () => {
@@ -101,10 +104,12 @@ describe('Integration test', () => {
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
     expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).rejects.toBe('failure')
     expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
     expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls done immediatly', async () => {
@@ -115,5 +120,6 @@ describe('Integration test', () => {
     expect(isPending(getState(), 'BAR_REQUEST')).toBe(false)
     expect(hasFailed(getState(), 'BAR_REQUEST')).toBe(false)
     expect(isDone(getState(), 'BAR_REQUEST')).toBe(true)
+    expect(isComplete(getState(), 'BAR_REQUEST')).toBe(true)
   })
 })
