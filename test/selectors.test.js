@@ -14,6 +14,18 @@ const altState = {
       CREATE_USER: true,
       UPDATE_USER: true,
     },
+    [selectors.DONE]: {
+      FETCH_USER: false,
+      FETCH_USERS: false,
+      CREATE_USER: true,
+      UPDATE_USER: true,
+    },
+    [selectors.COMPLETE]: {
+      FETCH_USER: false,
+      FETCH_USERS: false,
+      CREATE_USER: true,
+      UPDATE_USER: true,
+    },
   },
 }
 
@@ -21,6 +33,8 @@ test('initialState', () => {
   expect(selectors.initialState).toEqual({
     [selectors.PENDING]: {},
     [selectors.FAILURE]: {},
+    [selectors.DONE]: {},
+    [selectors.COMPLETE]: {},
   })
 })
 
@@ -46,6 +60,14 @@ test('getFailureState', () => {
     .toEqual(selectors.initialState[selectors.FAILURE])
   expect(selectors.getFailureState(altState))
     .toEqual(altState.thunk[selectors.FAILURE])
+})
+test('getSuceessState', () => {
+  expect(selectors.getDoneState({ thunk: undefined }))
+    .toEqual(selectors.initialState[selectors.DONE])
+  expect(selectors.getDoneState({ thunk: selectors.initialState }))
+    .toEqual(selectors.initialState[selectors.DONE])
+  expect(selectors.getDoneState(altState))
+    .toEqual(altState.thunk[selectors.DONE])
 })
 
 describe('isPending', () => {
@@ -85,5 +107,45 @@ describe('hasFailed', () => {
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.hasFailed(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.hasFailed(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+})
+
+describe('isDone', () => {
+  test('all', () => {
+    expect(selectors.isDone({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.isDone(altState)).toBe(true)
+  })
+
+  test('with prefix', () => {
+    expect(selectors.isDone({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.isDone(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.isDone(altState, 'CREATE_USER')).toBe(true)
+  })
+
+  test('with array prefix', () => {
+    expect(selectors.isDone({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.isDone(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.isDone(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.isDone(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+})
+
+describe('isComplete', () => {
+  test('all', () => {
+    expect(selectors.isComplete({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.isComplete(altState)).toBe(true)
+  })
+
+  test('with prefix', () => {
+    expect(selectors.isComplete({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.isComplete(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.isComplete(altState, 'CREATE_USER')).toBe(true)
+  })
+
+  test('with array prefix', () => {
+    expect(selectors.isComplete({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.isComplete(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.isComplete(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.isComplete(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
   })
 })

@@ -4,6 +4,8 @@ import pick from 'lodash/pick'
 
 export const PENDING = 'pending'
 export const FAILURE = 'failure'
+export const DONE = 'done'
+export const COMPLETE = 'complete'
 
 type ThunkState = { [string]: ?{} }
 
@@ -14,6 +16,8 @@ type State = {
 export const initialState = {
   [PENDING]: {},
   [FAILURE]: {},
+  [DONE]: {},
+  [COMPLETE]: {},
 }
 
 const getIn = (state: {}, name?: string | string[]): boolean => {
@@ -40,6 +44,12 @@ export const getPendingState = (state: State) =>
 export const getFailureState = (state: State) =>
   getThunkState(state)[FAILURE] || initialState[FAILURE]
 
+export const getDoneState = (state: State) =>
+  getThunkState(state)[DONE] || initialState[DONE]
+
+export const getCompleteState = (state: State) =>
+  getThunkState(state)[COMPLETE] || initialState[COMPLETE]
+
 /**
  * Tells if an action is pending
  * @example
@@ -64,3 +74,26 @@ export const isPending = (state: State, name?: string | string[]): boolean =>
 export const hasFailed = (state: State, name?: string | string[]): boolean =>
   getIn(getFailureState(state), name)
 
+  /**
+ * Tells if an action is done
+ * @example
+ * const mapStateToProps = state => ({
+ *   fooIsDone: isDone(state, 'FOO'),
+ *   fooOrBarIsDone: isDone(state, ['FOO', 'BAR']),
+ *   anythingIsDone: isDone(state)
+ * })
+ */
+export const isDone = (state: State, name?: string | string[]): boolean =>
+  getIn(getDoneState(state), name)
+
+  /**
+ * Tells if an action is complete
+ * @example
+ * const mapStateToProps = state => ({
+ *   fooIsComplete: isComplete(state, 'FOO'),
+ *   fooOrBarIsComplete: isComplete(state, ['FOO', 'BAR']),
+ *   anythingIsComplete: isComplete(state)
+ * })
+ */
+export const isComplete = (state: State, name?: string | string[]): boolean =>
+  getIn(getCompleteState(state), name)

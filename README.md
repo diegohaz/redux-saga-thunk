@@ -205,6 +205,48 @@ const mapStateToProps = state => ({
 
 Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
+### isDone
+
+Tells if an action is done
+
+**Parameters**
+
+-   `state` **State** 
+-   `name` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>)** 
+
+**Examples**
+
+```javascript
+const mapStateToProps = state => ({
+  fooIsDone: isDone(state, 'FOO'),
+  fooOrBarIsDone: isDone(state, ['FOO', 'BAR']),
+  anythingIsDone: isDone(state)
+})
+```
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+### isComplete
+
+Tells if an action is complete
+
+**Parameters**
+
+-   `state` **State** 
+-   `name` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>)** 
+
+**Examples**
+
+```javascript
+const mapStateToProps = state => ({
+  fooIsComplete: isComplete(state, 'FOO'),
+  fooOrBarIsComplete: isComplete(state, ['FOO', 'BAR']),
+  anythingIsComplete: isComplete(state)
+})
+```
+
+Returns **[boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
 ## License
 
 MIT © [Diego Haz](https://github.com/diegohaz)
