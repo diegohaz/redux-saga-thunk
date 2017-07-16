@@ -136,7 +136,7 @@ function *someSaga() {
 
 ## Usage with selectors
 
-To use `isPending` and `hasFailed` selectors, you'll need to add the `thunkReducer` to your store:
+To use `isPending`, `hasFailed`, `isDone` and `isComplete` selectors, you'll need to add the `thunkReducer` to your store:
 
 ```js
 import { combineReducers } from 'redux'
@@ -151,11 +151,13 @@ const reducer = combineReducers({
 Now you can use selectors on your containers:
 
 ```js
-import { isPending, hasFailed } from 'redux-saga-thunk'
+import { isPending, hasFailed, isDone, isComplete } from 'redux-saga-thunk'
 
 const mapStateToProps = state => ({
   loading: isPending(state, 'RESOURCE_CREATE_REQUEST'),
-  error: hasFailed(state, 'RESOURCE_CREATE_REQUEST')
+  error: hasFailed(state, 'RESOURCE_CREATE_REQUEST'),
+  done: isDone(state, 'RESOURCE_CREATE_REQUEST'),
+  complete: isComplete(state, 'RESOURCE_CREATE_REQUEST'),
 })
 ```
 
