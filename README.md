@@ -52,81 +52,61 @@ const store = createStore({}, applyMiddleware(thunkMiddleware, sagaMiddleware))
 
 ## Usage
 
-Add `meta.thunk` to your actions and receive `thunk` on response actions:
+You just need to set `meta.thunk` to `true` on your request actions and put it on your response actions inside the saga:
 
 ```js
-const resourceCreateRequest = data => ({
-  type: 'RESOURCE_CREATE_REQUEST', // you can name it as you want
-  payload: data,
+const action = {
+  type: 'RESOURCE_REQUEST',
+  payload: { id: 'foo' },
   meta: {
     thunk: true
-    ^
-  }
+    ^
+  }
+}
+
+// send the action
+store.dispatch(action).then((detail) => {
+  // payload == detail
+  console.log('Yaay!', detail)
+}).catch((e) => {
+  // payload == e
+  console.log('Oops!', e)
 })
 
-const resourceCreateSuccess = (detail, thunk) => ({
-                                       ^
-  type: 'RESOURCE_CREATE_SUCCESS', // name really doesn't matter
-  payload: detail, // promise will return payload
-  meta: {
-    thunk
-    ^
-  }
-})
-
-const resourceCreateFailure = (error, thunk) => ({
-                                      ^
-  type: 'RESOURCE_CREATE_FAILURE',
-  error: true, // redux-saga-thunk will use this to determine if that's a failed action
-  payload: error,
-  meta: {
-    thunk
-    ^
-  }
-})
-```
-
-`redux-saga-thunk` will automatically transform your request action and inject a `key` into it.
-
-Handle actions with `redux-saga` like you normally do, but you'll need to grab `meta.thunk` from the request action and pass it to the response actions:
-
-```js
-// thunk will be transformed in something like 'RESOURCE_CREATE_REQUEST_1234567890123456_REQUEST'
-// the 16 digits in the middle are necessary to handle multiple thunk actions with same type
-function* createResource() {
+function* saga() {
   while(true) {
-    const { payload, meta } = yield take('RESOURCE_CREATE_REQUEST')
-                     ^
-    try {
-      const detail = yield call(callApi, payload)
-      yield put(resourceCreateSuccess(detail, meta.thunk))
-                                              ^
-    } catch (e) {
-      yield put(resourceCreateFailure(e, meta.thunk))
-                                         ^
-    }
+    const { payload, meta } = yield take('RESOURCE_REQUEST') 
+                     ^
+    try {
+      const detail = yield call(callApi, payload) // payload == { id: 'foo' }
+      yield put({
+        type: 'RESOURCE_SUCCESS',
+        payload: detail,
+        meta
+        ^
+      })
+    } catch (e) {
+      yield put({
+        type: 'RESOURCE_FAILURE',
+        payload: e,
+        error: true,
+        ^
+        meta
+        ^
+      })
+    }
   }
 }
 ```
 
-Dispatch the action from somewhere. Since that's being intercepted by `thunkMiddleware` cause you set `meta.thunk` on the action, dispatch will return a promise.
+`redux-saga-thunk` will automatically transform your request action and inject a `key` into it.
 
-```js
-store.dispatch(resourceCreateRequest({ title: 'foo' })).then((detail) => {
-  // detail is the action payload property
-  console.log('Yaay!', detail)
-}).catch((error) => {
-  // error is the action payload property
-  console.log('Oops!', error)
-})
-```
-
-Or use it inside sagas with [`put.resolve`](https://redux-saga.js.org/docs/api/#putresolveaction):
+You can also use it inside sagas with [`put.resolve`](https://redux-saga.js.org/docs/api/#putresolveaction):
 
 ```js
 function *someSaga() {
   try {
-    const detail = yield put.resolve(resourceCreateRequest({ title: 'foo' }))
+    const detail = yield put.resolve(action)
     console.log('Yaay!', detail)
   } catch (error) {
     console.log('Oops!', error)
