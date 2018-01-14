@@ -15,7 +15,6 @@ export interface ReduxSagaThunkAction extends Action {
 /* *
  * Redux Saga Thunk Middleware
  */
-
 export const middleware: any;
 
 /* *
@@ -31,4 +30,4 @@ export const isComplete: ReduxSagaThunkSelector;
 /* *
  * Redux Saga Thunk Reducer
  */
-export const thunkReducer: any;
+export const reducer: any;
