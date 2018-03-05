@@ -2,6 +2,7 @@
 
 [![Generated with nod](https://img.shields.io/badge/generator-nod-2196F3.svg?style=flat-square)](https://github.com/diegohaz/nod)
 [![NPM version](https://img.shields.io/npm/v/redux-saga-thunk.svg?style=flat-square)](https://npmjs.org/package/redux-saga-thunk)
+[![NPM downloads](https://img.shields.io/npm/dm/redux-saga-thunk.svg?style=flat-square)](https://npmjs.org/package/redux-saga-thunk)
 [![Build Status](https://img.shields.io/travis/diegohaz/redux-saga-thunk/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/redux-saga-thunk) [![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/redux-saga-thunk/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/redux-saga-thunk/branch/master)
 
 Dispatching an action handled by [redux-saga](https://github.com/redux-saga/redux-saga) returns promise. It looks like [redux-thunk](https://github.com/gaearon/redux-thunk), but with pure action creators.
