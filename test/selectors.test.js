@@ -8,7 +8,13 @@ const altState = {
       CREATE_USER: false,
       UPDATE_USER: true,
     },
-    [selectors.FAILURE]: {
+    [selectors.REJECTED]: {
+      FETCH_USER: false,
+      FETCH_USERS: false,
+      CREATE_USER: true,
+      UPDATE_USER: true,
+    },
+    [selectors.FULFILLED]: {
       FETCH_USER: false,
       FETCH_USERS: false,
       CREATE_USER: true,
@@ -20,21 +26,15 @@ const altState = {
       CREATE_USER: true,
       UPDATE_USER: true,
     },
-    [selectors.COMPLETE]: {
-      FETCH_USER: false,
-      FETCH_USERS: false,
-      CREATE_USER: true,
-      UPDATE_USER: true,
-    },
   },
 }
 
 test('initialState', () => {
   expect(selectors.initialState).toEqual({
     [selectors.PENDING]: {},
-    [selectors.FAILURE]: {},
+    [selectors.REJECTED]: {},
+    [selectors.FULFILLED]: {},
     [selectors.DONE]: {},
-    [selectors.COMPLETE]: {},
   })
 })
 
@@ -53,99 +53,99 @@ test('getPendingState', () => {
     .toEqual(altState.thunk[selectors.PENDING])
 })
 
-test('getFailureState', () => {
-  expect(selectors.getFailureState({ thunk: undefined }))
-    .toEqual(selectors.initialState[selectors.FAILURE])
-  expect(selectors.getFailureState({ thunk: selectors.initialState }))
-    .toEqual(selectors.initialState[selectors.FAILURE])
-  expect(selectors.getFailureState(altState))
-    .toEqual(altState.thunk[selectors.FAILURE])
+test('getRejectedState', () => {
+  expect(selectors.getRejectedState({ thunk: undefined }))
+    .toEqual(selectors.initialState[selectors.REJECTED])
+  expect(selectors.getRejectedState({ thunk: selectors.initialState }))
+    .toEqual(selectors.initialState[selectors.REJECTED])
+  expect(selectors.getRejectedState(altState))
+    .toEqual(altState.thunk[selectors.REJECTED])
 })
-test('getSuceessState', () => {
-  expect(selectors.getDoneState({ thunk: undefined }))
-    .toEqual(selectors.initialState[selectors.DONE])
-  expect(selectors.getDoneState({ thunk: selectors.initialState }))
-    .toEqual(selectors.initialState[selectors.DONE])
-  expect(selectors.getDoneState(altState))
-    .toEqual(altState.thunk[selectors.DONE])
+test('getFulfilledState', () => {
+  expect(selectors.getFulfilledState({ thunk: undefined }))
+    .toEqual(selectors.initialState[selectors.FULFILLED])
+  expect(selectors.getFulfilledState({ thunk: selectors.initialState }))
+    .toEqual(selectors.initialState[selectors.FULFILLED])
+  expect(selectors.getFulfilledState(altState))
+    .toEqual(altState.thunk[selectors.FULFILLED])
 })
 
-describe('isPending', () => {
+describe('pending', () => {
   test('all', () => {
-    expect(selectors.isPending({ thunk: selectors.initialState })).toBe(false)
-    expect(selectors.isPending(altState)).toBe(true)
+    expect(selectors.pending({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.pending(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.isPending({ thunk: selectors.initialState }, 'FETCH_USER')).toBe(false)
-    expect(selectors.isPending(altState, 'FETCH_USER')).toBe(false)
-    expect(selectors.isPending(altState, 'FETCH_USERS')).toBe(true)
+    expect(selectors.pending({ thunk: selectors.initialState }, 'FETCH_USER')).toBe(false)
+    expect(selectors.pending(altState, 'FETCH_USER')).toBe(false)
+    expect(selectors.pending(altState, 'FETCH_USERS')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.isPending({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
-    expect(selectors.isPending(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(false)
-    expect(selectors.isPending(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(true)
-    expect(selectors.isPending(altState, ['FETCH_USERS', 'FETCH_USER'])).toBe(true)
+    expect(selectors.pending({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.pending(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(false)
+    expect(selectors.pending(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(true)
+    expect(selectors.pending(altState, ['FETCH_USERS', 'FETCH_USER'])).toBe(true)
   })
 })
 
-describe('hasFailed', () => {
+describe('rejected', () => {
   test('all', () => {
-    expect(selectors.hasFailed({ thunk: selectors.initialState })).toBe(false)
-    expect(selectors.hasFailed(altState)).toBe(true)
+    expect(selectors.rejected({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.rejected(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.hasFailed({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
-    expect(selectors.hasFailed(altState, 'FETCH_USERS')).toBe(false)
-    expect(selectors.hasFailed(altState, 'CREATE_USER')).toBe(true)
+    expect(selectors.rejected({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.rejected(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.rejected(altState, 'CREATE_USER')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.hasFailed({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
-    expect(selectors.hasFailed(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
-    expect(selectors.hasFailed(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
-    expect(selectors.hasFailed(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+    expect(selectors.rejected({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.rejected(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.rejected(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.rejected(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
   })
 })
 
-describe('isDone', () => {
+describe('fulfilled', () => {
   test('all', () => {
-    expect(selectors.isDone({ thunk: selectors.initialState })).toBe(false)
-    expect(selectors.isDone(altState)).toBe(true)
+    expect(selectors.fulfilled({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.fulfilled(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.isDone({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
-    expect(selectors.isDone(altState, 'FETCH_USERS')).toBe(false)
-    expect(selectors.isDone(altState, 'CREATE_USER')).toBe(true)
+    expect(selectors.fulfilled({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.fulfilled(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.fulfilled(altState, 'CREATE_USER')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.isDone({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
-    expect(selectors.isDone(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
-    expect(selectors.isDone(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
-    expect(selectors.isDone(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+    expect(selectors.fulfilled({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.fulfilled(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.fulfilled(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.fulfilled(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
   })
 })
 
-describe('isComplete', () => {
+describe('done', () => {
   test('all', () => {
-    expect(selectors.isComplete({ thunk: selectors.initialState })).toBe(false)
-    expect(selectors.isComplete(altState)).toBe(true)
+    expect(selectors.done({ thunk: selectors.initialState })).toBe(false)
+    expect(selectors.done(altState)).toBe(true)
   })
 
   test('with prefix', () => {
-    expect(selectors.isComplete({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
-    expect(selectors.isComplete(altState, 'FETCH_USERS')).toBe(false)
-    expect(selectors.isComplete(altState, 'CREATE_USER')).toBe(true)
+    expect(selectors.done({ thunk: selectors.initialState }, 'FETCH_USERS')).toBe(false)
+    expect(selectors.done(altState, 'FETCH_USERS')).toBe(false)
+    expect(selectors.done(altState, 'CREATE_USER')).toBe(true)
   })
 
   test('with array prefix', () => {
-    expect(selectors.isComplete({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
-    expect(selectors.isComplete(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
-    expect(selectors.isComplete(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
-    expect(selectors.isComplete(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+    expect(selectors.done({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
+    expect(selectors.done(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
+    expect(selectors.done(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
+    expect(selectors.done(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
   })
 })

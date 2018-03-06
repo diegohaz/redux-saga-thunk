@@ -1,12 +1,12 @@
 import { isThunkAction, isThunkRequestAction, getThunkName } from './utils'
-import { PENDING, FAILURE, DONE, COMPLETE, initialState } from './selectors'
+import { PENDING, REJECTED, FULFILLED, DONE, initialState } from './selectors'
 
-const transformState = (state, name, pending, failure, done, complete) => ({
+const transformState = (state, name, pending, rejected, fulfilled, done) => ({
   ...state,
   [PENDING]: { ...state[PENDING], [name]: pending },
-  [FAILURE]: { ...state[FAILURE], [name]: failure },
+  [REJECTED]: { ...state[REJECTED], [name]: rejected },
+  [FULFILLED]: { ...state[FULFILLED], [name]: fulfilled },
   [DONE]: { ...state[DONE], [name]: done },
-  [COMPLETE]: { ...state[COMPLETE], [name]: complete },
 })
 
 export default (state = initialState, action) => {

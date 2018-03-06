@@ -3,9 +3,9 @@ import find from 'lodash/find'
 import pick from 'lodash/pick'
 
 export const PENDING = 'pending'
-export const FAILURE = 'failure'
+export const REJECTED = 'rejected'
+export const FULFILLED = 'fulfilled'
 export const DONE = 'done'
-export const COMPLETE = 'complete'
 
 type ThunkState = { [string]: ?{} }
 
@@ -15,9 +15,9 @@ type State = {
 
 export const initialState = {
   [PENDING]: {},
-  [FAILURE]: {},
+  [REJECTED]: {},
+  [FULFILLED]: {},
   [DONE]: {},
-  [COMPLETE]: {},
 }
 
 const getIn = (state: {}, name?: string | string[]): boolean => {
@@ -41,59 +41,59 @@ export const getThunkState = (state: State = {}): ThunkState => {
 export const getPendingState = (state: State) =>
   getThunkState(state)[PENDING] || initialState[PENDING]
 
-export const getFailureState = (state: State) =>
-  getThunkState(state)[FAILURE] || initialState[FAILURE]
+export const getRejectedState = (state: State) =>
+  getThunkState(state)[REJECTED] || initialState[REJECTED]
+
+export const getFulfilledState = (state: State) =>
+  getThunkState(state)[FULFILLED] || initialState[FULFILLED]
 
 export const getDoneState = (state: State) =>
   getThunkState(state)[DONE] || initialState[DONE]
-
-export const getCompleteState = (state: State) =>
-  getThunkState(state)[COMPLETE] || initialState[COMPLETE]
 
 /**
  * Tells if an action is pending
  * @example
  * const mapStateToProps = state => ({
- *   fooIsPending: isPending(state, 'FOO'),
- *   fooOrBarIsPending: isPending(state, ['FOO', 'BAR']),
- *   anythingIsPending: isPending(state)
+ *   fooIsPending: pending(state, 'FOO'),
+ *   fooOrBarIsPending: pending(state, ['FOO', 'BAR']),
+ *   anythingIsPending: pending(state)
  * })
  */
-export const isPending = (state: State, name?: string | string[]): boolean =>
+export const pending = (state: State, name?: string | string[]): boolean =>
   getIn(getPendingState(state), name)
 
 /**
- * Tells if an action has failed
+ * Tells if an action was rejected
  * @example
  * const mapStateToProps = state => ({
- *   fooHasFailed: hasFailed(state, 'FOO'),
- *   fooOrBarHasFailed: hasFailed(state, ['FOO', 'BAR']),
- *   anythingHasFailed: hasFailed(state)
+ *   fooWasRejected: rejected(state, 'FOO'),
+ *   fooOrBarWasRejected: rejected(state, ['FOO', 'BAR']),
+ *   anythingWasRejected: rejected(state)
  * })
  */
-export const hasFailed = (state: State, name?: string | string[]): boolean =>
-  getIn(getFailureState(state), name)
+export const rejected = (state: State, name?: string | string[]): boolean =>
+  getIn(getRejectedState(state), name)
+
+  /**
+ * Tells if an action is fulfilled
+ * @example
+ * const mapStateToProps = state => ({
+ *   fooIsFulfilled: fulfilled(state, 'FOO'),
+ *   fooOrBarIsFulfilled: fulfilled(state, ['FOO', 'BAR']),
+ *   anythingIsFulfilled: fulfilled(state)
+ * })
+ */
+export const fulfilled = (state: State, name?: string | string[]): boolean =>
+  getIn(getFulfilledState(state), name)
 
   /**
  * Tells if an action is done
  * @example
  * const mapStateToProps = state => ({
- *   fooIsDone: isDone(state, 'FOO'),
- *   fooOrBarIsDone: isDone(state, ['FOO', 'BAR']),
- *   anythingIsDone: isDone(state)
+ *   fooIsDone: done(state, 'FOO'),
+ *   fooOrBarIsDone: done(state, ['FOO', 'BAR']),
+ *   anythingIsDone: done(state)
  * })
  */
-export const isDone = (state: State, name?: string | string[]): boolean =>
+export const done = (state: State, name?: string | string[]): boolean =>
   getIn(getDoneState(state), name)
-
-  /**
- * Tells if an action is complete
- * @example
- * const mapStateToProps = state => ({
- *   fooIsComplete: isComplete(state, 'FOO'),
- *   fooOrBarIsComplete: isComplete(state, ['FOO', 'BAR']),
- *   anythingIsComplete: isComplete(state)
- * })
- */
-export const isComplete = (state: State, name?: string | string[]): boolean =>
-  getIn(getCompleteState(state), name)
