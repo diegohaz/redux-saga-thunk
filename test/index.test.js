@@ -4,10 +4,10 @@ import { put, take, call, fork, takeEvery } from 'redux-saga/effects'
 import {
   middleware as thunkMiddleware,
   reducer as thunkReducer,
-  isPending,
-  hasFailed,
-  isDone,
-  isComplete,
+  pending,
+  rejected,
+  fulfilled,
+  done,
 } from '../src'
 
 function* foo(payload, meta) {
@@ -85,15 +85,15 @@ describe('Integration test', () => {
     const promise = dispatch(fooRequest('done'))
     expect(promise).toBeInstanceOf(Promise)
     await delay(400)
-    expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(pending(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(rejected(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(done(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).resolves.toBe('done')
-    expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isDone(getState(), 'FOO_REQUEST')).toBe(true)
-    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(pending(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(rejected(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(done(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls failure', async () => {
@@ -101,15 +101,15 @@ describe('Integration test', () => {
     const promise = dispatch(fooRequest('failure'))
     expect(promise).toBeInstanceOf(Promise)
     await delay(400)
-    expect(isPending(getState(), 'FOO_REQUEST')).toBe(true)
-    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(pending(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(rejected(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(done(getState(), 'FOO_REQUEST')).toBe(false)
     await expect(promise).rejects.toBe('failure')
-    expect(isPending(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(hasFailed(getState(), 'FOO_REQUEST')).toBe(true)
-    expect(isDone(getState(), 'FOO_REQUEST')).toBe(false)
-    expect(isComplete(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(pending(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(rejected(getState(), 'FOO_REQUEST')).toBe(true)
+    expect(fulfilled(getState(), 'FOO_REQUEST')).toBe(false)
+    expect(done(getState(), 'FOO_REQUEST')).toBe(true)
   })
 
   it('calls done immediatly', async () => {
@@ -117,9 +117,9 @@ describe('Integration test', () => {
     const promise = dispatch(barRequest('done'))
     expect(promise).toBeInstanceOf(Promise)
     await expect(promise).resolves.toBe('done')
-    expect(isPending(getState(), 'BAR_REQUEST')).toBe(false)
-    expect(hasFailed(getState(), 'BAR_REQUEST')).toBe(false)
-    expect(isDone(getState(), 'BAR_REQUEST')).toBe(true)
-    expect(isComplete(getState(), 'BAR_REQUEST')).toBe(true)
+    expect(pending(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(rejected(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'BAR_REQUEST')).toBe(true)
+    expect(done(getState(), 'BAR_REQUEST')).toBe(true)
   })
 })

@@ -148,12 +148,12 @@ const mapStateToProps = state => ({
 
 #### Table of Contents
 
--   [isPending](#ispending)
--   [hasFailed](#hasfailed)
--   [isDone](#isdone)
--   [isComplete](#iscomplete)
+-   [pending](#pending)
+-   [rejected](#rejected)
+-   [fulfilled](#fulfilled)
+-   [done](#done)
 
-### isPending
+### pending
 
 Tells if an action is pending
 
@@ -166,17 +166,17 @@ Tells if an action is pending
 
 ```javascript
 const mapStateToProps = state => ({
-  fooIsPending: isPending(state, 'FOO'),
-  fooOrBarIsPending: isPending(state, ['FOO', 'BAR']),
-  anythingIsPending: isPending(state)
+  fooIsPending: pending(state, 'FOO'),
+  fooOrBarIsPending: pending(state, ['FOO', 'BAR']),
+  anythingIsPending: pending(state)
 })
 ```
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
-### hasFailed
+### rejected
 
-Tells if an action has failed
+Tells if an action was rejected
 
 **Parameters**
 
@@ -187,15 +187,36 @@ Tells if an action has failed
 
 ```javascript
 const mapStateToProps = state => ({
-  fooHasFailed: hasFailed(state, 'FOO'),
-  fooOrBarHasFailed: hasFailed(state, ['FOO', 'BAR']),
-  anythingHasFailed: hasFailed(state)
+  fooWasRejected: rejected(state, 'FOO'),
+  fooOrBarWasRejected: rejected(state, ['FOO', 'BAR']),
+  anythingWasRejected: rejected(state)
 })
 ```
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
 
-### isDone
+### fulfilled
+
+Tells if an action is fulfilled
+
+**Parameters**
+
+-   `state` **State** 
+-   `name` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>)** 
+
+**Examples**
+
+```javascript
+const mapStateToProps = state => ({
+  fooIsFulfilled: fulfilled(state, 'FOO'),
+  fooOrBarIsFulfilled: fulfilled(state, ['FOO', 'BAR']),
+  anythingIsFulfilled: fulfilled(state)
+})
+```
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
+
+### done
 
 Tells if an action is done
 
@@ -208,30 +229,9 @@ Tells if an action is done
 
 ```javascript
 const mapStateToProps = state => ({
-  fooIsDone: isDone(state, 'FOO'),
-  fooOrBarIsDone: isDone(state, ['FOO', 'BAR']),
-  anythingIsDone: isDone(state)
-})
-```
-
-Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 
-
-### isComplete
-
-Tells if an action is complete
-
-**Parameters**
-
--   `state` **State** 
--   `name` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>)** 
-
-**Examples**
-
-```javascript
-const mapStateToProps = state => ({
-  fooIsComplete: isComplete(state, 'FOO'),
-  fooOrBarIsComplete: isComplete(state, ['FOO', 'BAR']),
-  anythingIsComplete: isComplete(state)
+  fooIsDone: done(state, 'FOO'),
+  fooOrBarIsDone: done(state, ['FOO', 'BAR']),
+  anythingIsDone: done(state)
 })
 ```
 

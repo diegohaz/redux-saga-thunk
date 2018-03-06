@@ -1,5 +1,5 @@
 import { reducer } from '../src'
-import { PENDING, FAILURE, DONE, COMPLETE, initialState } from '../src/selectors'
+import { PENDING, REJECTED, FULFILLED, DONE, initialState } from '../src/selectors'
 
 const action = (meta, error) => ({
   type: 'FOO',
@@ -12,23 +12,23 @@ it('returns the initial state', () => {
   expect(reducer(undefined, action())).toEqual(initialState)
 })
 
-const expectStateToMatch = (thunk, error, pending, failure, succeeded, completed) =>
+const expectStateToMatch = (thunk, error, pending, rejected, fulfilled, done) =>
   expect(reducer(initialState, action({ thunk }, error)))
     .toEqual({
       [PENDING]: { FOO: pending },
-      [FAILURE]: { FOO: failure },
-      [DONE]: { FOO: succeeded },
-      [COMPLETE]: { FOO: completed },
+      [REJECTED]: { FOO: rejected },
+      [FULFILLED]: { FOO: fulfilled },
+      [DONE]: { FOO: done },
     })
 
 it('handles PENDING', () => {
   expectStateToMatch('FOO_1234567890123456_REQUEST', false, true, false, false, false)
 })
 
-it('handles DONE', () => {
+it('handles FULFILLED', () => {
   expectStateToMatch('FOO_1234567890123456_RESPONSE', false, false, false, true, true)
 })
 
-it('handles FAILURE', () => {
+it('handles REJECTED', () => {
   expectStateToMatch('FOO_1234567890123456_RESPONSE', true, false, true, false, true)
 })
