@@ -63,7 +63,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.21.0",
     "babel-preset-env": "^1.1.8",
     "babel-preset-stage-2": "^6.18.0",
-    "documentation": "5.3.5",
+    "documentation": "6.0.0",
     "eslint": "^4.0.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-flowtype": "^2.29.2",
