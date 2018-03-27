@@ -29,6 +29,13 @@ export const getThunkName = (action) => {
   return action.type
 }
 
+export const isIdInMeta = (action) => {
+  const meta = getThunkMeta(action)
+  return (meta && typeof meta === 'object' && 'id' in meta) || false
+}
+
+export const getThunkId = action => (isIdInMeta(action) ? getThunkMeta(action).id : undefined)
+
 export const hasKey = action => /_\d{16}_\w+$/.test(getThunkMeta(action))
 
 export const generateThunkKey = (action) => {

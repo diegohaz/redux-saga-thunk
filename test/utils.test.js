@@ -4,6 +4,8 @@ import {
   getThunkMeta,
   createThunkAction,
   getThunkName,
+  isIdInMeta,
+  getThunkId,
   hasKey,
   generateThunkKey,
 } from '../src/utils'
@@ -82,6 +84,21 @@ test('getThunkName', () => {
       thunk: 'BAR_1234567890123456_RESPONSE',
     },
   })).toBe('BAR')
+})
+
+test('isIdInMeta', () => {
+  expect(isIdInMeta(action({}))).toBe(false)
+  expect(isIdInMeta(action({ thunk: true }))).toBe(false)
+  expect(isIdInMeta(action({ thunk: { id: 1 } }))).toBe(true)
+  expect(isIdInMeta(action({ thunk: { id: undefined } }))).toBe(true)
+  expect(isIdInMeta(action({ thunk: 'FOO' }))).toBe(false)
+})
+
+test('getThunkId', () => {
+  expect(getThunkId(action({}))).toBe(undefined)
+  expect(getThunkId(action({ thunk: true }))).toBe(undefined)
+  expect(getThunkId(action({ thunk: { id: 1 } }))).toBe(1)
+  expect(getThunkId(action({ thunk: 'FOO' }))).toBe(undefined)
 })
 
 test('hasKey', () => {
