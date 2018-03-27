@@ -13,6 +13,10 @@ type State = {
   thunk?: ThunkState
 }
 
+type Identifier = string | number
+
+type Name = string | (string | [string, Identifier])[]
+
 export const initialState = {
   [PENDING]: {},
   [REJECTED]: {},
@@ -20,13 +24,30 @@ export const initialState = {
   [DONE]: {},
 }
 
-const getIn = (state: {}, name?: string | string[]): boolean => {
+const getIn = (state: {}, name?: Name, id?: Identifier): boolean => {
   if (typeof name === 'undefined') {
     return !!find(state, value => !!value)
   } else if (Array.isArray(name)) {
-    return !!find(pick(state, name), value => !!value)
+    const names = name.map(n => (Array.isArray(n) ? n[0] : n))
+    const nameToIdMap = name.reduce((prev, curr) => {
+      if (Array.isArray(curr)) {
+        return Object.assign({}, prev, { [curr[0]]: curr[1] })
+      }
+      return prev
+    }, {})
+
+    return !!find(pick(state, names), (value, key) => {
+      if (typeof nameToIdMap[key] === 'undefined') {
+        return !!value
+      }
+
+      return typeof value === 'object' ? !!value[nameToIdMap[key]] : false
+    })
   } else if (Object.prototype.hasOwnProperty.call(state, name)) {
-    return !!state[name]
+    if (typeof id === 'undefined') {
+      return !!state[name]
+    }
+    return typeof state[name] === 'object' ? !!state[name][id] : false
   }
   return false
 }
@@ -55,45 +76,57 @@ export const getDoneState = (state: State) =>
  * @example
  * const mapStateToProps = state => ({
  *   fooIsPending: pending(state, 'FOO'),
- *   fooOrBarIsPending: pending(state, ['FOO', 'BAR']),
+ *   barForId42IsPending: pending(state, 'BAR', 42),
+ *   barForAnyIdIsPending: pending(state, 'BAR'),
+ *   fooOrBazIsPending: pending(state, ['FOO', 'BAZ']),
+ *   fooOrBarForId42IsPending: pending(state, ['FOO', ['BAR', 42]]),
  *   anythingIsPending: pending(state)
  * })
  */
-export const pending = (state: State, name?: string | string[]): boolean =>
-  getIn(getPendingState(state), name)
+export const pending = (state: State, name?: Name, id?: Identifier): boolean =>
+  getIn(getPendingState(state), name, id)
 
 /**
  * Tells if an action was rejected
  * @example
  * const mapStateToProps = state => ({
  *   fooWasRejected: rejected(state, 'FOO'),
- *   fooOrBarWasRejected: rejected(state, ['FOO', 'BAR']),
+ *   barForId42WasRejected: rejected(state, 'BAR', 42),
+ *   barForAnyIdWasRejected: rejected(state, 'BAR'),
+ *   fooOrBazWasRejected: rejected(state, ['FOO', 'BAZ']),
+ *   fooOrBarForId42WasRejected: rejected(state, ['FOO', ['BAR', 42]]),
  *   anythingWasRejected: rejected(state)
  * })
  */
-export const rejected = (state: State, name?: string | string[]): boolean =>
-  getIn(getRejectedState(state), name)
+export const rejected = (state: State, name?: Name, id?: Identifier): boolean =>
+  getIn(getRejectedState(state), name, id)
 
   /**
  * Tells if an action is fulfilled
  * @example
  * const mapStateToProps = state => ({
  *   fooIsFulfilled: fulfilled(state, 'FOO'),
- *   fooOrBarIsFulfilled: fulfilled(state, ['FOO', 'BAR']),
+ *   barForId42IsFulfilled: fulfilled(state, 'BAR', 42),
+ *   barForAnyIdIsFulfilled: fulfilled(state, 'BAR'),
+ *   fooOrBazIsFulfilled: fulfilled(state, ['FOO', 'BAZ']),
+ *   fooOrBarForId42IsFulfilled: fulfilled(state, ['FOO', ['BAR', 42]]),
  *   anythingIsFulfilled: fulfilled(state)
  * })
  */
-export const fulfilled = (state: State, name?: string | string[]): boolean =>
-  getIn(getFulfilledState(state), name)
+export const fulfilled = (state: State, name?: Name, id?: Identifier): boolean =>
+  getIn(getFulfilledState(state), name, id)
 
   /**
  * Tells if an action is done
  * @example
  * const mapStateToProps = state => ({
  *   fooIsDone: done(state, 'FOO'),
- *   fooOrBarIsDone: done(state, ['FOO', 'BAR']),
+ *   barForId42IsDone: done(state, 'BAR', 42),
+ *   barForAnyIdIsDone: done(state, 'BAR'),
+ *   fooOrBazIsDone: done(state, ['FOO', 'BAZ']),
+ *   fooOrBarForId42IsDone: done(state, ['FOO', ['BAR', 42]]),
  *   anythingIsDone: done(state)
  * })
  */
-export const done = (state: State, name?: string | string[]): boolean =>
-  getIn(getDoneState(state), name)
+export const done = (state: State, name?: Name, id?: Identifier): boolean =>
+  getIn(getDoneState(state), name, id)
