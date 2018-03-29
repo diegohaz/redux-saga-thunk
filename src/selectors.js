@@ -13,10 +13,6 @@ type State = {
   thunk?: ThunkState
 }
 
-type Identifier = string | number
-
-type Name = string | (string | [string, Identifier])[]
-
 export const initialState = {
   [PENDING]: {},
   [REJECTED]: {},
@@ -24,7 +20,11 @@ export const initialState = {
   [DONE]: {},
 }
 
-const getIn = (state: {}, name?: Name, id?: Identifier): boolean => {
+const getIn = (
+  state: {},
+  name?: string | (string | [string, string | number])[],
+  id?: string | number,
+): boolean => {
   if (typeof name === 'undefined') {
     return !!find(state, value => !!value)
   } else if (Array.isArray(name)) {
@@ -83,8 +83,11 @@ export const getDoneState = (state: State) =>
  *   anythingIsPending: pending(state)
  * })
  */
-export const pending = (state: State, name?: Name, id?: Identifier): boolean =>
-  getIn(getPendingState(state), name, id)
+export const pending = (
+  state: State,
+  name?: string | (string | [string, string | number])[],
+  id?: string | number,
+): boolean => getIn(getPendingState(state), name, id)
 
 /**
  * Tells if an action was rejected
@@ -98,7 +101,11 @@ export const pending = (state: State, name?: Name, id?: Identifier): boolean =>
  *   anythingWasRejected: rejected(state)
  * })
  */
-export const rejected = (state: State, name?: Name, id?: Identifier): boolean =>
+export const rejected = (
+  state: State,
+  name?: string | (string | [string, string | number])[],
+  id?: string | number,
+): boolean =>
   getIn(getRejectedState(state), name, id)
 
   /**
@@ -113,7 +120,11 @@ export const rejected = (state: State, name?: Name, id?: Identifier): boolean =>
  *   anythingIsFulfilled: fulfilled(state)
  * })
  */
-export const fulfilled = (state: State, name?: Name, id?: Identifier): boolean =>
+export const fulfilled = (
+  state: State,
+  name?: string | (string | [string, string | number])[],
+  id?: string | number,
+): boolean =>
   getIn(getFulfilledState(state), name, id)
 
   /**
@@ -128,5 +139,9 @@ export const fulfilled = (state: State, name?: Name, id?: Identifier): boolean =
  *   anythingIsDone: done(state)
  * })
  */
-export const done = (state: State, name?: Name, id?: Identifier): boolean =>
+export const done = (
+  state: State,
+  name?: string | (string | [string, string | number])[],
+  id?: string | number,
+): boolean =>
   getIn(getDoneState(state), name, id)
