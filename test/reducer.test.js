@@ -12,23 +12,87 @@ it('returns the initial state', () => {
   expect(reducer(undefined, action())).toEqual(initialState)
 })
 
-const expectStateToMatch = (thunk, error, pending, rejected, fulfilled, done) =>
-  expect(reducer(initialState, action({ thunk }, error)))
-    .toEqual({
-      [PENDING]: { FOO: pending },
-      [REJECTED]: { FOO: rejected },
-      [FULFILLED]: { FOO: fulfilled },
-      [DONE]: { FOO: done },
-    })
+const expectStateToMatch = (
+  state,
+  thunk,
+  error,
+  pending,
+  rejected,
+  fulfilled,
+  done,
+) =>
+  expect(reducer(state, action({ thunk }, error))).toEqual({
+    [PENDING]: { FOO: pending },
+    [REJECTED]: { FOO: rejected },
+    [FULFILLED]: { FOO: fulfilled },
+    [DONE]: { FOO: done },
+  })
 
 it('handles PENDING', () => {
-  expectStateToMatch('FOO_1234567890123456_REQUEST', false, true, false, false, false)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'REQUEST',
+  }, false, true, false, false, false)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'REQUEST',
+    id: 1,
+  }, false, { 1: true }, false, false, false)
+  expectStateToMatch({
+    ...initialState,
+    [PENDING]: { FOO: { 2: true } },
+  }, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'REQUEST',
+    id: 1,
+  }, false, { 1: true, 2: true }, false, false, false)
 })
 
 it('handles FULFILLED', () => {
-  expectStateToMatch('FOO_1234567890123456_RESPONSE', false, false, false, true, true)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+  }, false, false, false, true, true)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+    id: 1,
+  }, false, false, false, { 1: true }, { 1: true })
+  expectStateToMatch({
+    ...initialState,
+    [PENDING]: { FOO: { 1: true } },
+  }, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+    id: 1,
+  }, false, false, false, { 1: true }, { 1: true })
 })
 
 it('handles REJECTED', () => {
-  expectStateToMatch('FOO_1234567890123456_RESPONSE', true, false, true, false, true)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+  }, true, false, true, false, true)
+  expectStateToMatch(initialState, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+    id: 1,
+  }, true, false, { 1: true }, false, { 1: true })
+  expectStateToMatch({
+    ...initialState,
+    [PENDING]: { FOO: { 1: true } },
+  }, {
+    key: '1234567890123456',
+    name: 'FOO',
+    type: 'RESPONSE',
+    id: 1,
+  }, true, false, { 1: true }, false, { 1: true })
 })

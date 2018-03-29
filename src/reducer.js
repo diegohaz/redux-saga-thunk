@@ -7,16 +7,16 @@ const transformSubstate = (substate, path, value) => {
 
   if (path.length === 2) {
     const id = path[1]
-    const trueIds = Object.keys(substate[name])
-    const isLastTrueValueInState = trueIds.length === 1 && id === trueIds[0]
 
-    if (isLastTrueValueInState && !value) {
-      newValue = false
-    } else if (!value) {
+    if (!value) {
       newValue = { ...substate[name] }
       delete newValue[id]
     } else {
       newValue = { ...substate[name], [id]: true }
+    }
+
+    if (Object.keys(newValue).length === 0) {
+      newValue = false
     }
   }
 
