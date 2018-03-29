@@ -3,7 +3,7 @@ export const isThunkAction = action => !!(
 )
 
 export const isThunkRequestAction = action => !!(
-  isThunkAction(action) && /\d{16}_REQUEST$/.test(action.meta.thunk)
+  isThunkAction(action) && typeof action.meta.thunk === 'object' && action.meta.thunk.type === 'REQUEST'
 )
 
 export const getThunkMeta = (action) => {
@@ -23,26 +23,41 @@ export const createThunkAction = (action, thunk) => ({
 
 export const getThunkName = (action) => {
   const meta = getThunkMeta(action)
-  if (meta && meta.replace) {
-    return meta.replace(/_\d{16}_\w+$/, '')
+  if (meta && typeof meta === 'string') {
+    return meta
+  }
+  if (meta && typeof meta === 'object' && 'name' in meta) {
+    return meta.name
   }
   return action.type
 }
 
-export const isIdInMeta = (action) => {
+export const hasId = (action) => {
   const meta = getThunkMeta(action)
-  return (meta && typeof meta === 'object' && 'id' in meta) || false
+  return !!meta && typeof meta === 'object' && 'id' in meta
 }
 
-export const getThunkId = action => (isIdInMeta(action) ? getThunkMeta(action).id : undefined)
+export const getThunkId = action => (hasId(action) ? getThunkMeta(action).id : undefined)
 
-export const hasKey = action => /_\d{16}_\w+$/.test(getThunkMeta(action))
-
-export const generateThunkKey = (action) => {
+export const hasKey = (action) => {
   const meta = getThunkMeta(action)
-  const name = getThunkName(action)
-  return hasKey(action)
-    ? meta.replace(/_REQUEST$/, '_RESPONSE')
-    : `${name}_${Math.random().toFixed(16).substring(2)}_REQUEST`
+  return !!meta && typeof meta === 'object' && 'key' in meta
 }
 
+export const generateThunk = (action) => {
+  const thunk = getThunkMeta(action)
+
+  return (
+    hasKey(action)
+      ? {
+        ...thunk,
+        type: 'RESPONSE',
+      }
+      : {
+        ...(thunk || {}),
+        name: getThunkName(action),
+        key: Math.random().toFixed(16).substring(2),
+        type: 'REQUEST',
+      }
+  )
+}
