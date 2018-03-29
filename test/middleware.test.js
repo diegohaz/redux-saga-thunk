@@ -3,8 +3,10 @@ import { middleware } from '../src'
 
 const mockStore = configureStore([middleware])
 
+const actionType = 'FOO'
+
 const createAction = meta => ({
-  type: 'FOO',
+  type: actionType,
   ...meta ? { meta } : {},
 })
 
@@ -26,7 +28,11 @@ it('dispatches an action with request key when it has meta.thunk but no key', ()
   const { dispatch, getActions } = mockStore({})
   const action = createAction({ thunk: true })
   const expected = createAction({
-    thunk: expect.stringMatching(/^FOO_\d{16}_REQUEST$/),
+    thunk: {
+      name: actionType,
+      key: expect.stringMatching(/^\d{16}$/),
+      type: 'REQUEST',
+    },
   })
   expect(dispatch(action)).toBeInstanceOf(Promise)
   expect(getActions()).toEqual([expected])
@@ -34,7 +40,7 @@ it('dispatches an action with request key when it has meta.thunk but no key', ()
 
 it('throws an error when response action is dispatched before request action', () => {
   const { dispatch } = mockStore({})
-  const action = createAction({ thunk: 'FOOBAR_1234567890123456_REQUEST' })
+  const action = createAction({ thunk: { key: '1234567890123456', name: 'FOOBAR', type: 'REQUEST' } })
   expect(() => dispatch(action)).toThrow('[redux-saga-thunk] FOOBAR should be dispatched before FOO')
 })
 
@@ -42,12 +48,12 @@ it('dispatches an action with response key when it has meta.thunk with key', () 
   const { dispatch, getActions, clearActions } = mockStore({})
   // dispatch request action
   dispatch(createAction({ thunk: 'FOOBAR' }))
-  const [key] = getActions()[0].meta.thunk.match(/\d{16}/)
+  const { key } = getActions()[0].meta.thunk
   clearActions()
 
-  const action = createAction({ thunk: `FOOBAR_${key}_REQUEST` })
+  const action = createAction({ thunk: { key, name: 'FOOBAR', type: 'REQUEST' } })
   const expected = createAction({
-    thunk: expect.stringMatching(`FOOBAR_${key}_RESPONSE`),
+    thunk: { key, name: 'FOOBAR', type: 'RESPONSE' },
   })
   expect(dispatch(action)).toEqual(expected)
   expect(getActions()).toEqual([expected])
