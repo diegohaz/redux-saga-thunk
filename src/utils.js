@@ -1,3 +1,5 @@
+import { CLEAN } from './actions'
+
 export const isThunkAction = action =>
   !!(action && action.meta && action.meta.thunk)
 
@@ -7,6 +9,8 @@ export const isThunkRequestAction = action =>
     typeof action.meta.thunk === 'object' &&
     action.meta.thunk.type === 'REQUEST'
   )
+
+export const isCleanAction = action => action.type === CLEAN
 
 export const getThunkMeta = action => {
   if (isThunkAction(action)) {
