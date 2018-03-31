@@ -9,11 +9,11 @@ export const CLEAN = `${PREFIX}clean`
  * const mapDispatchToProps = (dispatch, ownProps) => ({
  *   cleanFetchUserStateForAllIds: () => dispatch(clean('FETCH_USER')),
  *   cleanFetchUserStateForSpecifiedId: () => dispatch(clean('FETCH_USER', ownProps.id)),
- *   cleanStateForAllActions: () => dispatch(clean()),
+ *   cleanFetchUsersState: () => dispatch(clean('FETCH_USERS')),
  * })
  */
 // eslint-disable-next-line import/prefer-default-export
-export function clean(name?: string, id?: string | number) {
+export function clean(name: string, id?: string | number) {
   return {
     type: CLEAN,
     meta: {

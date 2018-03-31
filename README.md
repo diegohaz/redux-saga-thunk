@@ -169,7 +169,7 @@ Clean state
 const mapDispatchToProps = (dispatch, ownProps) => ({
   cleanFetchUserStateForAllIds: () => dispatch(clean('FETCH_USER')),
   cleanFetchUserStateForSpecifiedId: () => dispatch(clean('FETCH_USER', ownProps.id)),
-  cleanStateForAllActions: () => dispatch(clean()),
+  cleanFetchUsersState: () => dispatch(clean('FETCH_USERS')),
 })
 ```
 
