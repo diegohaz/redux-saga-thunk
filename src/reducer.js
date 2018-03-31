@@ -1,4 +1,10 @@
-import { isThunkAction, isThunkRequestAction, getThunkName, hasId, getThunkId } from './utils'
+import {
+  isThunkAction,
+  isThunkRequestAction,
+  getThunkName,
+  hasId,
+  getThunkId,
+} from './utils'
 import { PENDING, REJECTED, FULFILLED, DONE, initialState } from './selectors'
 
 const transformSubstate = (substate, path, value) => {
@@ -20,10 +26,10 @@ const transformSubstate = (substate, path, value) => {
     }
   }
 
-  return ({
+  return {
     ...substate,
     [name]: newValue,
-  })
+  }
 }
 
 const transformState = (state, path, pending, rejected, fulfilled, done) => ({

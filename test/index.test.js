@@ -40,7 +40,6 @@ function* watchFoo() {
   }
 }
 
-
 function* bar({ payload, meta }) {
   yield put({ type: 'BAR_SUCCESS', payload, meta })
 }
