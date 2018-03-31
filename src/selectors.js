@@ -10,7 +10,7 @@ export const DONE = 'done'
 type ThunkState = { [string]: ?{} }
 
 type State = {
-  thunk?: ThunkState
+  thunk?: ThunkState,
 }
 
 export const initialState = {
@@ -105,10 +105,9 @@ export const rejected = (
   state: State,
   name?: string | (string | [string, string | number])[],
   id?: string | number,
-): boolean =>
-  getIn(getRejectedState(state), name, id)
+): boolean => getIn(getRejectedState(state), name, id)
 
-  /**
+/**
  * Tells if an action is fulfilled
  * @example
  * const mapStateToProps = state => ({
@@ -124,10 +123,9 @@ export const fulfilled = (
   state: State,
   name?: string | (string | [string, string | number])[],
   id?: string | number,
-): boolean =>
-  getIn(getFulfilledState(state), name, id)
+): boolean => getIn(getFulfilledState(state), name, id)
 
-  /**
+/**
  * Tells if an action is done
  * @example
  * const mapStateToProps = state => ({
@@ -143,5 +141,4 @@ export const done = (
   state: State,
   name?: string | (string | [string, string | number])[],
   id?: string | number,
-): boolean =>
-  getIn(getDoneState(state), name, id)
+): boolean => getIn(getDoneState(state), name, id)

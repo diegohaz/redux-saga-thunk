@@ -7,7 +7,7 @@ const actionType = 'FOO'
 
 const createAction = meta => ({
   type: actionType,
-  ...meta ? { meta } : {},
+  ...(meta ? { meta } : {}),
 })
 
 it('dispatches the exactly same action when it has no meta', () => {
@@ -40,8 +40,12 @@ it('dispatches an action with request key when it has meta.thunk but no key', ()
 
 it('throws an error when response action is dispatched before request action', () => {
   const { dispatch } = mockStore({})
-  const action = createAction({ thunk: { key: '1234567890123456', name: 'FOOBAR', type: 'REQUEST' } })
-  expect(() => dispatch(action)).toThrow('[redux-saga-thunk] FOOBAR should be dispatched before FOO')
+  const action = createAction({
+    thunk: { key: '1234567890123456', name: 'FOOBAR', type: 'REQUEST' },
+  })
+  expect(() => dispatch(action)).toThrow(
+    '[redux-saga-thunk] FOOBAR should be dispatched before FOO',
+  )
 })
 
 it('dispatches an action with response key when it has meta.thunk with key', () => {
@@ -51,7 +55,9 @@ it('dispatches an action with response key when it has meta.thunk with key', () 
   const { key } = getActions()[0].meta.thunk
   clearActions()
 
-  const action = createAction({ thunk: { key, name: 'FOOBAR', type: 'REQUEST' } })
+  const action = createAction({
+    thunk: { key, name: 'FOOBAR', type: 'REQUEST' },
+  })
   const expected = createAction({
     thunk: { key, name: 'FOOBAR', type: 'RESPONSE' },
   })

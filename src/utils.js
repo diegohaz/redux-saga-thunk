@@ -1,12 +1,14 @@
-export const isThunkAction = action => !!(
-  action && action.meta && action.meta.thunk
-)
+export const isThunkAction = action =>
+  !!(action && action.meta && action.meta.thunk)
 
-export const isThunkRequestAction = action => !!(
-  isThunkAction(action) && typeof action.meta.thunk === 'object' && action.meta.thunk.type === 'REQUEST'
-)
+export const isThunkRequestAction = action =>
+  !!(
+    isThunkAction(action) &&
+    typeof action.meta.thunk === 'object' &&
+    action.meta.thunk.type === 'REQUEST'
+  )
 
-export const getThunkMeta = (action) => {
+export const getThunkMeta = action => {
   if (isThunkAction(action)) {
     return action.meta.thunk
   }
@@ -21,7 +23,7 @@ export const createThunkAction = (action, thunk) => ({
   },
 })
 
-export const getThunkName = (action) => {
+export const getThunkName = action => {
   const meta = getThunkMeta(action)
   if (meta && typeof meta === 'string') {
     return meta
@@ -32,32 +34,33 @@ export const getThunkName = (action) => {
   return action.type
 }
 
-export const hasId = (action) => {
+export const hasId = action => {
   const meta = getThunkMeta(action)
   return !!meta && typeof meta === 'object' && 'id' in meta
 }
 
-export const getThunkId = action => (hasId(action) ? getThunkMeta(action).id : undefined)
+export const getThunkId = action =>
+  hasId(action) ? getThunkMeta(action).id : undefined
 
-export const hasKey = (action) => {
+export const hasKey = action => {
   const meta = getThunkMeta(action)
   return !!meta && typeof meta === 'object' && 'key' in meta
 }
 
-export const generateThunk = (action) => {
+export const generateThunk = action => {
   const thunk = getThunkMeta(action)
 
-  return (
-    hasKey(action)
-      ? {
+  return hasKey(action)
+    ? {
         ...thunk,
         type: 'RESPONSE',
       }
-      : {
+    : {
         ...(thunk || {}),
         name: getThunkName(action),
-        key: Math.random().toFixed(16).substring(2),
+        key: Math.random()
+          .toFixed(16)
+          .substring(2),
         type: 'REQUEST',
       }
-  )
 }

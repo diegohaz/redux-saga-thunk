@@ -14,7 +14,7 @@ const actionType = 'FOO'
 
 const action = meta => ({
   type: actionType,
-  ...meta ? { meta } : {},
+  ...(meta ? { meta } : {}),
 })
 
 test('isThunkAction', () => {
@@ -31,7 +31,9 @@ test('isThunkRequestAction', () => {
   expect(isThunkRequestAction(action({ thunk: true }))).toBe(false)
   expect(isThunkRequestAction(action({ thunk: { id: 1 } }))).toBe(false)
   expect(isThunkRequestAction(action({ thunk: 'FOO' }))).toBe(false)
-  expect(isThunkRequestAction(action({ thunk: { type: 'REQUEST' } }))).toBe(true)
+  expect(isThunkRequestAction(action({ thunk: { type: 'REQUEST' } }))).toBe(
+    true,
+  )
 })
 
 test('getThunkMeta', () => {
@@ -78,14 +80,30 @@ test('hasKey', () => {
 })
 
 test('generateThunk', () => {
-  expect(generateThunk(action({ thunk: 'FOO' }))).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: 'FOO', type: 'REQUEST' })
-  expect(generateThunk(action({ thunk: true }))).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: actionType, type: 'REQUEST' })
+  expect(generateThunk(action({ thunk: 'FOO' }))).toMatchObject({
+    key: expect.stringMatching(/^\d{16}/),
+    name: 'FOO',
+    type: 'REQUEST',
+  })
+  expect(generateThunk(action({ thunk: true }))).toMatchObject({
+    key: expect.stringMatching(/^\d{16}/),
+    name: actionType,
+    type: 'REQUEST',
+  })
   expect(generateThunk(action({ thunk: { id: 1 } }))).toMatchObject({
     id: 1,
     key: expect.stringMatching(/^\d{16}/),
     name: actionType,
     type: 'REQUEST',
   })
-  expect(generateThunk(action())).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: actionType, type: 'REQUEST' })
-  expect(generateThunk(action({ thunk: { key: '1234567890123456', type: 'REQUEST' } }))).toMatchObject({ type: 'RESPONSE' })
+  expect(generateThunk(action())).toMatchObject({
+    key: expect.stringMatching(/^\d{16}/),
+    name: actionType,
+    type: 'REQUEST',
+  })
+  expect(
+    generateThunk(
+      action({ thunk: { key: '1234567890123456', type: 'REQUEST' } }),
+    ),
+  ).toMatchObject({ type: 'RESPONSE' })
 })
