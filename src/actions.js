@@ -13,12 +13,11 @@ export const CLEAN = `${PREFIX}clean`
  * })
  */
 // eslint-disable-next-line import/prefer-default-export
-export function clean(thunkName?: string, id?: string | number) {
+export function clean(name?: string, id?: string | number) {
   return {
     type: CLEAN,
     meta: {
-      thunkName,
-      id,
+      thunk: arguments.length > 1 ? { name, id } : { name },
     },
   }
 }
