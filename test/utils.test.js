@@ -4,12 +4,16 @@ import {
   getThunkMeta,
   createThunkAction,
   getThunkName,
+  hasId,
+  getThunkId,
   hasKey,
-  generateThunkKey,
+  generateThunk,
 } from '../src/utils'
 
+const actionType = 'FOO'
+
 const action = meta => ({
-  type: 'FOO',
+  type: actionType,
   ...meta ? { meta } : {},
 })
 
@@ -17,6 +21,7 @@ test('isThunkAction', () => {
   expect(isThunkAction(action())).toBe(false)
   expect(isThunkAction(action({}))).toBe(false)
   expect(isThunkAction(action({ thunk: {} }))).toBe(true)
+  expect(isThunkAction(action({ thunk: { id: 1 } }))).toBe(true)
   expect(isThunkAction(action({ thunk: true }))).toBe(true)
 })
 
@@ -24,123 +29,63 @@ test('isThunkRequestAction', () => {
   expect(isThunkRequestAction(action())).toBe(false)
   expect(isThunkRequestAction(action({}))).toBe(false)
   expect(isThunkRequestAction(action({ thunk: true }))).toBe(false)
+  expect(isThunkRequestAction(action({ thunk: { id: 1 } }))).toBe(false)
   expect(isThunkRequestAction(action({ thunk: 'FOO' }))).toBe(false)
-  expect(isThunkRequestAction(action({ thunk: 'FOO_1234567890123456' }))).toBe(false)
-  expect(isThunkRequestAction(action({ thunk: 'FOO_1234567890123456_REQUEST' }))).toBe(true)
+  expect(isThunkRequestAction(action({ thunk: { type: 'REQUEST' } }))).toBe(true)
 })
 
 test('getThunkMeta', () => {
   expect(getThunkMeta(action({}))).toBeNull()
   expect(getThunkMeta(action({ thunk: true }))).toBe(true)
+  expect(getThunkMeta(action({ thunk: { id: 1 } }))).toEqual({ id: 1 })
 })
 
 test('createThunkAction', () => {
-  expect(createThunkAction({ type: 'FOO' }, 'foo')).toEqual({
-    type: 'FOO',
-    meta: {
-      thunk: 'foo',
-    },
-  })
+  expect(createThunkAction(action(), 'foo')).toEqual(action({ thunk: 'foo' }))
 })
 
 test('getThunkName', () => {
-  expect(getThunkName({ type: 'FOO' })).toBe('FOO')
-  expect(getThunkName({
-    type: 'FOO',
-    meta: {},
-  })).toBe('FOO')
-  expect(getThunkName({
-    type: 'FOO',
-    meta: {
-      thunk: true,
-    },
-  })).toBe('FOO')
-  expect(getThunkName({
-    type: 'FOO',
-    meta: {
-      thunk: 'BAR',
-    },
-  })).toBe('BAR')
-  expect(getThunkName({
-    type: 'FOO',
-    meta: {
-      thunk: 'BAR_1234567890123456_REQUEST',
-    },
-  })).toBe('BAR')
-  expect(getThunkName({
-    type: 'FOO',
-    meta: {
-      thunk: 'BAR_1234567890123456_RESPONSE',
-    },
-  })).toBe('BAR')
+  expect(getThunkName(action())).toBe(actionType)
+  expect(getThunkName(action({}))).toBe(actionType)
+  expect(getThunkName(action({ thunk: true }))).toBe(actionType)
+  expect(getThunkName(action({ thunk: { id: 1 } }))).toBe(actionType)
+  expect(getThunkName(action({ thunk: 'BAR' }))).toBe('BAR')
+  expect(getThunkName(action({ thunk: { name: 'BAR' } }))).toBe('BAR')
+})
+
+test('hasId', () => {
+  expect(hasId(action({}))).toBe(false)
+  expect(hasId(action({ thunk: true }))).toBe(false)
+  expect(hasId(action({ thunk: { id: 1 } }))).toBe(true)
+  expect(hasId(action({ thunk: { id: undefined } }))).toBe(true)
+  expect(hasId(action({ thunk: 'FOO' }))).toBe(false)
+})
+
+test('getThunkId', () => {
+  expect(getThunkId(action({}))).toBe(undefined)
+  expect(getThunkId(action({ thunk: true }))).toBe(undefined)
+  expect(getThunkId(action({ thunk: { id: 1 } }))).toBe(1)
+  expect(getThunkId(action({ thunk: 'FOO' }))).toBe(undefined)
 })
 
 test('hasKey', () => {
-  expect(hasKey({ type: 'FOO' })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {},
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: true,
-    },
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO',
-    },
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO_1234567890123456_REQUEST',
-    },
-  })).toBe(true)
+  expect(hasKey(action())).toBe(false)
+  expect(hasKey(action({}))).toBe(false)
+  expect(hasKey(action({ thunk: true }))).toBe(false)
+  expect(hasKey(action({ thunk: { id: 1 } }))).toBe(false)
+  expect(hasKey(action({ thunk: 'FOO' }))).toBe(false)
+  expect(hasKey(action({ thunk: { key: '1234567890123456' } }))).toBe(true)
 })
 
-test('hasKey', () => {
-  expect(hasKey({ type: 'FOO' })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {},
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: true,
-    },
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO',
-    },
-  })).toBe(false)
-  expect(hasKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO_1234567890123456_REQUEST',
-    },
-  })).toBe(true)
-})
-
-test('generateThunkKey', () => {
-  expect(generateThunkKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO',
-    },
-  })).toEqual(expect.stringMatching(/^FOO_\d{16}_REQUEST/))
-  expect(generateThunkKey({
-    type: 'FOO',
-  })).toEqual(expect.stringMatching(/^FOO_\d{16}_REQUEST/))
-  expect(generateThunkKey({
-    type: 'FOO',
-    meta: {
-      thunk: 'FOO_1234567890123456_REQUEST',
-    },
-  })).toEqual(expect.stringMatching(/^FOO_1234567890123456_RESPONSE/))
+test('generateThunk', () => {
+  expect(generateThunk(action({ thunk: 'FOO' }))).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: 'FOO', type: 'REQUEST' })
+  expect(generateThunk(action({ thunk: true }))).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: actionType, type: 'REQUEST' })
+  expect(generateThunk(action({ thunk: { id: 1 } }))).toMatchObject({
+    id: 1,
+    key: expect.stringMatching(/^\d{16}/),
+    name: actionType,
+    type: 'REQUEST',
+  })
+  expect(generateThunk(action())).toMatchObject({ key: expect.stringMatching(/^\d{16}/), name: actionType, type: 'REQUEST' })
+  expect(generateThunk(action({ thunk: { key: '1234567890123456', type: 'REQUEST' } }))).toMatchObject({ type: 'RESPONSE' })
 })

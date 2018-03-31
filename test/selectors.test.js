@@ -6,25 +6,39 @@ const altState = {
       FETCH_USER: false,
       FETCH_USERS: true,
       CREATE_USER: false,
-      UPDATE_USER: true,
+      UPDATE_USER: {
+        1: true,
+      },
     },
     [selectors.REJECTED]: {
       FETCH_USER: false,
       FETCH_USERS: false,
-      CREATE_USER: true,
-      UPDATE_USER: true,
+      CREATE_USER: {
+        someuniqtempid: true,
+      },
+      UPDATE_USER: {
+        1: true,
+      },
     },
     [selectors.FULFILLED]: {
       FETCH_USER: false,
       FETCH_USERS: false,
-      CREATE_USER: true,
-      UPDATE_USER: true,
+      CREATE_USER: {
+        someuniqtempid: true,
+      },
+      UPDATE_USER: {
+        1: true,
+      },
     },
     [selectors.DONE]: {
       FETCH_USER: false,
       FETCH_USERS: false,
-      CREATE_USER: true,
-      UPDATE_USER: true,
+      CREATE_USER: {
+        someuniqtempid: true,
+      },
+      UPDATE_USER: {
+        1: true,
+      },
     },
   },
 }
@@ -80,13 +94,30 @@ describe('pending', () => {
     expect(selectors.pending({ thunk: selectors.initialState }, 'FETCH_USER')).toBe(false)
     expect(selectors.pending(altState, 'FETCH_USER')).toBe(false)
     expect(selectors.pending(altState, 'FETCH_USERS')).toBe(true)
+    expect(selectors.pending(altState, 'UPDATE_USER')).toBe(true)
   })
 
-  test('with array prefix', () => {
+  test('with prefix and identifier', () => {
+    expect(selectors.pending({ thunk: selectors.initialState }, 'UPDATE_USER', 1)).toBe(false)
+    expect(selectors.pending(altState, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.pending(altState, 'FETCH_USERS', 'some_identifier')).toBe(false)
+    expect(selectors.pending(altState, 'UPDATE_USER', 1)).toBe(true)
+  })
+
+  test('with array of prefixes', () => {
     expect(selectors.pending({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.pending(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(false)
     expect(selectors.pending(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(true)
     expect(selectors.pending(altState, ['FETCH_USERS', 'FETCH_USER'])).toBe(true)
+    expect(selectors.pending(altState, ['FETCH_USER', 'UPDATE_USER'])).toBe(true)
+  })
+
+  test('with array of prefix+identifier pairs', () => {
+    expect(selectors.pending({ thunk: selectors.initialState }, [['FETCH_USER', 1]])).toBe(false)
+    expect(selectors.pending(altState, [['FETCH_USER', 1], 'CREATE_USER'])).toBe(false)
+    expect(selectors.pending(altState, [['FETCH_USER', 1], ['UPDATE_USER', 1]])).toBe(true)
+    expect(selectors.pending(altState, [['FETCH_USER', 1], ['UPDATE_USER', 2]])).toBe(false)
+    expect(selectors.pending(altState, [['FETCH_USER', 1], 'UPDATE_USER'])).toBe(true)
   })
 })
 
@@ -102,11 +133,26 @@ describe('rejected', () => {
     expect(selectors.rejected(altState, 'CREATE_USER')).toBe(true)
   })
 
-  test('with array prefix', () => {
+  test('with prefix and identifier', () => {
+    expect(selectors.rejected({ thunk: selectors.initialState }, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.rejected(altState, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.rejected(altState, 'CREATE_USER', 'someuniqtempid')).toBe(true)
+    expect(selectors.rejected(altState, 'UPDATE_USER', 2)).toBe(false)
+  })
+
+  test('with array of prefixes', () => {
     expect(selectors.rejected({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.rejected(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.rejected(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.rejected(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+
+  test('with array of prefix+identifier pairs', () => {
+    expect(selectors.rejected({ thunk: selectors.initialState }, [['FETCH_USER', 1]])).toBe(false)
+    expect(selectors.rejected(altState, [['FETCH_USER', 1], 'FETCH_USERS'])).toBe(false)
+    expect(selectors.rejected(altState, [['FETCH_USER', 1], ['UPDATE_USER', 1]])).toBe(true)
+    expect(selectors.rejected(altState, [['FETCH_USER', 1], ['UPDATE_USER', 2]])).toBe(false)
+    expect(selectors.rejected(altState, [['FETCH_USER', 1], 'UPDATE_USER'])).toBe(true)
   })
 })
 
@@ -122,11 +168,26 @@ describe('fulfilled', () => {
     expect(selectors.fulfilled(altState, 'CREATE_USER')).toBe(true)
   })
 
-  test('with array prefix', () => {
+  test('with prefix and identifier', () => {
+    expect(selectors.fulfilled({ thunk: selectors.initialState }, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.fulfilled(altState, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.fulfilled(altState, 'CREATE_USER', 'someuniqtempid')).toBe(true)
+    expect(selectors.fulfilled(altState, 'UPDATE_USER', 2)).toBe(false)
+  })
+
+  test('with array of prefixes', () => {
     expect(selectors.fulfilled({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.fulfilled(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.fulfilled(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.fulfilled(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+
+  test('with array of prefix+identifier pairs', () => {
+    expect(selectors.fulfilled({ thunk: selectors.initialState }, [['FETCH_USER', 1]])).toBe(false)
+    expect(selectors.fulfilled(altState, [['FETCH_USER', 1], 'FETCH_USERS'])).toBe(false)
+    expect(selectors.fulfilled(altState, [['FETCH_USER', 1], ['UPDATE_USER', 1]])).toBe(true)
+    expect(selectors.fulfilled(altState, [['FETCH_USER', 1], ['UPDATE_USER', 2]])).toBe(false)
+    expect(selectors.fulfilled(altState, [['FETCH_USER', 1], 'UPDATE_USER'])).toBe(true)
   })
 })
 
@@ -142,10 +203,25 @@ describe('done', () => {
     expect(selectors.done(altState, 'CREATE_USER')).toBe(true)
   })
 
-  test('with array prefix', () => {
+  test('with prefix and identifier', () => {
+    expect(selectors.done({ thunk: selectors.initialState }, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.done(altState, 'FETCH_USER', 1)).toBe(false)
+    expect(selectors.done(altState, 'CREATE_USER', 'someuniqtempid')).toBe(true)
+    expect(selectors.done(altState, 'UPDATE_USER', 2)).toBe(false)
+  })
+
+  test('with array of prefixes', () => {
     expect(selectors.done({ thunk: selectors.initialState }, ['FETCH_USER'])).toBe(false)
     expect(selectors.done(altState, ['FETCH_USER', 'FETCH_USERS'])).toBe(false)
     expect(selectors.done(altState, ['FETCH_USER', 'CREATE_USER'])).toBe(true)
     expect(selectors.done(altState, ['CREATE_USER', 'FETCH_USER'])).toBe(true)
+  })
+
+  test('with array of prefix+identifier pairs', () => {
+    expect(selectors.done({ thunk: selectors.initialState }, [['FETCH_USER', 1]])).toBe(false)
+    expect(selectors.done(altState, [['FETCH_USER', 1], 'FETCH_USERS'])).toBe(false)
+    expect(selectors.done(altState, [['FETCH_USER', 1], ['UPDATE_USER', 1]])).toBe(true)
+    expect(selectors.done(altState, [['FETCH_USER', 1], ['UPDATE_USER', 2]])).toBe(false)
+    expect(selectors.done(altState, [['FETCH_USER', 1], 'UPDATE_USER'])).toBe(true)
   })
 })
