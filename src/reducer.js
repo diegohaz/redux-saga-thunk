@@ -1,6 +1,7 @@
 import {
   isThunkAction,
   isThunkRequestAction,
+  isCleanAction,
   getThunkName,
   hasId,
   getThunkId,
@@ -32,6 +33,30 @@ const transformSubstate = (substate, path, value) => {
   }
 }
 
+const omit = (substate, path) => {
+  const name = path[0]
+
+  if (path.length === 1) {
+    const newState = { ...substate }
+    delete newState[name]
+    return newState
+  }
+
+  if (typeof substate[name] !== 'object') {
+    return substate
+  }
+
+  return transformSubstate(substate, path, false)
+}
+
+const cleanState = (state, path) => ({
+  ...state,
+  [PENDING]: omit(state[PENDING], path),
+  [REJECTED]: omit(state[REJECTED], path),
+  [FULFILLED]: omit(state[FULFILLED], path),
+  [DONE]: omit(state[DONE], path),
+})
+
 const transformState = (state, path, pending, rejected, fulfilled, done) => ({
   ...state,
   [PENDING]: transformSubstate(state[PENDING], path, pending),
@@ -44,6 +69,8 @@ export default (state = initialState, action) => {
   if (!isThunkAction(action)) return state
   const name = getThunkName(action)
   const path = hasId(action) ? [name, getThunkId(action)] : [name]
+
+  if (isCleanAction(action)) return cleanState(state, path)
 
   if (isThunkRequestAction(action)) {
     return transformState(state, path, true, false, false, false)

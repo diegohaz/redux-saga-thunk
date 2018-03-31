@@ -1,6 +1,7 @@
 import {
   isThunkAction,
   isThunkRequestAction,
+  isCleanAction,
   getThunkMeta,
   createThunkAction,
   getThunkName,
@@ -9,6 +10,7 @@ import {
   hasKey,
   generateThunk,
 } from '../src/utils'
+import { CLEAN } from '../src/actions'
 
 const actionType = 'FOO'
 
@@ -34,6 +36,11 @@ test('isThunkRequestAction', () => {
   expect(isThunkRequestAction(action({ thunk: { type: 'REQUEST' } }))).toBe(
     true,
   )
+})
+
+test('isCleanAction', () => {
+  expect(isCleanAction(action())).toBe(false)
+  expect(isCleanAction({ type: CLEAN })).toBe(true)
 })
 
 test('getThunkMeta', () => {

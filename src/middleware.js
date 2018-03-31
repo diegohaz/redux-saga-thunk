@@ -1,5 +1,6 @@
 import {
   isThunkAction,
+  isCleanAction,
   getThunkMeta,
   getThunkName,
   createThunkAction,
@@ -12,7 +13,7 @@ const middleware = () => {
 
   return next => action => {
     const { error, payload } = action
-    if (isThunkAction(action)) {
+    if (isThunkAction(action) && !isCleanAction(action)) {
       if (!hasKey(action)) {
         const thunk = generateThunk(action)
         return new Promise((resolve, reject) => {

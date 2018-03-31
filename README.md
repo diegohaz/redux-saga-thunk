@@ -148,10 +148,30 @@ const mapStateToProps = state => ({
 
 #### Table of Contents
 
+-   [clean](#clean)
 -   [pending](#pending)
 -   [rejected](#rejected)
 -   [fulfilled](#fulfilled)
 -   [done](#done)
+
+### clean
+
+Clean state
+
+**Parameters**
+
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+-   `id` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number))** 
+
+**Examples**
+
+```javascript
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  cleanFetchUserStateForAllIds: () => dispatch(clean('FETCH_USER')),
+  cleanFetchUserStateForSpecifiedId: () => dispatch(clean('FETCH_USER', ownProps.id)),
+  cleanFetchUsersState: () => dispatch(clean('FETCH_USERS')),
+})
+```
 
 ### pending
 

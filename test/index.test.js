@@ -8,6 +8,7 @@ import {
   rejected,
   fulfilled,
   done,
+  clean,
 } from '../src'
 
 function* foo(payload, meta) {
@@ -120,5 +121,21 @@ describe('Integration test', () => {
     expect(rejected(getState(), 'BAR_REQUEST')).toBe(false)
     expect(fulfilled(getState(), 'BAR_REQUEST')).toBe(true)
     expect(done(getState(), 'BAR_REQUEST')).toBe(true)
+  })
+
+  it('calls clean', async () => {
+    const { dispatch, getState } = configureStore()
+    const promise = dispatch(barRequest('done'))
+    expect(promise).toBeInstanceOf(Promise)
+    await expect(promise).resolves.toBe('done')
+    expect(pending(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(rejected(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'BAR_REQUEST')).toBe(true)
+    expect(done(getState(), 'BAR_REQUEST')).toBe(true)
+    dispatch(clean('BAR_REQUEST'))
+    expect(pending(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(rejected(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(fulfilled(getState(), 'BAR_REQUEST')).toBe(false)
+    expect(done(getState(), 'BAR_REQUEST')).toBe(false)
   })
 })

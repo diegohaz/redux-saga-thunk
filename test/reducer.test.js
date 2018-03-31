@@ -6,6 +6,7 @@ import {
   DONE,
   initialState,
 } from '../src/selectors'
+import { clean } from '../src/actions'
 
 const action = (meta, error) => ({
   type: 'FOO',
@@ -173,4 +174,52 @@ it('handles REJECTED', () => {
     false,
     { 1: true },
   )
+})
+
+it('handles CLEAN', () => {
+  expect(
+    reducer(
+      {
+        ...initialState,
+        [FULFILLED]: { FOO: true },
+      },
+      clean('FOO'),
+    ),
+  ).toEqual(initialState)
+
+  expect(
+    reducer(
+      {
+        ...initialState,
+        [FULFILLED]: { FOO: { 1: true } },
+      },
+      clean('FOO', 1),
+    ),
+  ).toEqual({
+    ...initialState,
+    [FULFILLED]: { FOO: false },
+  })
+
+  expect(
+    reducer(
+      {
+        ...initialState,
+        [FULFILLED]: { FOO: { 1: true, 2: false } },
+      },
+      clean('FOO', 2),
+    ),
+  ).toEqual({
+    ...initialState,
+    [FULFILLED]: { FOO: { 1: true } },
+  })
+
+  expect(
+    reducer(
+      {
+        ...initialState,
+        [FULFILLED]: { FOO: { 1: true, 2: false } },
+      },
+      clean('FOO'),
+    ),
+  ).toEqual(initialState)
 })
