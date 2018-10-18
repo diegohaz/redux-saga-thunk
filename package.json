@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-thunk",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Dispatching an action handled by redux-saga returns promise",
   "license": "MIT",
   "repository": "diegohaz/redux-saga-thunk",
