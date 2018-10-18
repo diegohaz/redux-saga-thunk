@@ -60,7 +60,7 @@ export const generateThunk = action => {
         type: 'RESPONSE',
       }
     : {
-        ...(thunk || {}),
+        ...(typeof thunk === 'object' ? thunk : {}),
         name: getThunkName(action),
         key: Math.random()
           .toFixed(16)
