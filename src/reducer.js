@@ -16,8 +16,10 @@ const transformSubstate = (substate, path, value) => {
     const id = path[1]
 
     if (!value) {
-      newValue = { ...substate[name] }
-      delete newValue[id]
+      if (typeof substate[name] === 'object') {
+        newValue = { ...substate[name] }
+        delete newValue[id] 
+      }
     } else {
       newValue = { ...substate[name], [id]: true }
     }
