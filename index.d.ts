@@ -20,7 +20,7 @@ export const middleware: any;
 /**
  * Redux Saga Thunk Selectors
  */
-type ReduxSagaThunkSelector = (state: any, name: string | string[]) => boolean;
+type ReduxSagaThunkSelector = (state: any, name: string | string[], id?: any) => boolean;
 
 export const pending: ReduxSagaThunkSelector;
 export const rejected: ReduxSagaThunkSelector;
